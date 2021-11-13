@@ -1,7 +1,7 @@
 package main.java;
 import java.util.Date;
 
-public class Compra { // registro de compra de estacionamiento
+public abstract class Compra { // registro de compra de estacionamiento
 	private int nroControl;
 	private String patente;
 	private Comercio comercio;
