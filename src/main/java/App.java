@@ -1,15 +1,18 @@
 package main.java;
 
 import java.sql.Date;
+import java.util.Calendar;
 
 public class App implements MovementSensor{
 
 	private Integer numero;
 	private String patente;
-	private EstadoDeMovimiento estado;
-	private ModoDeApp modo;
+	private EstadoDeMovimiento estado; /*State*/
+	private ModoDeApp modo; /* Strategy */
 	private boolean seInicioEstacionamiento;
+	private ZonaDeEstacionamiento ubicacionGPS;
 	private SEM sem = SEM.getInstance();
+	private int horaDeinicioDeEstacionamiento ;
 	
 	
 
@@ -55,27 +58,68 @@ public class App implements MovementSensor{
 		
 	}
 	
-	public void inicarEstacionamiento() {
-		this.setSeInicioEstacionamiento(true);
-		;
-		
-	}
-	
-	public void finalizarEstacionamiento() {
-		this.setSeInicioEstacionamiento(false);
-		
-	}
-	
 	public double saldoDeUsuario() {
-		return sem.getRegistroSaldo().get(numero);
+		return sem.saldoDeUsuario(this.getNumero());
 	}
 	
 	
-	public Integer getNumero() {
+	public void inicarEstacionamiento() {
+		if(sem.tieneSaldoSuficiente(numero) && this.seEncuentraEnUnaZonaEstacionamiento()) {
+			
+			this.setSeInicioEstacionamiento(true);
+			this.registrarHora();
+			sem.iniciarEstacionamientoVirtual(this.getPatente(), this.getUbicacionGPS());
+			System.out.print(this.getHoraInicioDeEstacionamiento());
+			System.out.print(this.horaMaximaDeEstacionamiento());
+		}
+		else {
+			System.out.print("saldo insuficiente. Estacionamiento no permitido");
+		}
+	}
+	
+	 boolean seEncuentraEnUnaZonaEstacionamiento() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private int horaMaximaDeEstacionamiento() {
+		
+		return  (int) Math.min( (this.getHoraInicioDeEstacionamiento() + (this.saldoDeUsuario() / 40)) , 20) ;
+	}
+	
+	private void registrarHora() {
+		Calendar now = Calendar.getInstance();
+		this.setHoraDeInicioDeEstacionamiento(now.get(Calendar.HOUR_OF_DAY));
+	}
+
+
+	public void finalizarEstacionamiento() {
+		if(this.isSeInicioEstacionamiento()) {
+			this.setSeInicioEstacionamiento(false);
+			sem.finalizarEstacionamientoVirtual(patente);
+			System.out.print(this.getHoraInicioDeEstacionamiento());
+			System.out.print(this.horaActual());
+			System.out.print(this.horaActual() - this.getHoraInicioDeEstacionamiento());
+			System.out.print(this.costeTotalDeEstacionamiento());
+			
+		}		
+	}
+	
+	private int costeTotalDeEstacionamiento() {
+		return (this.horaActual() - this.getHoraInicioDeEstacionamiento()) * 40;
+	}
+
+	private int horaActual() {
+		Calendar now = Calendar.getInstance();
+		return now.get(Calendar.HOUR_OF_DAY);
+	}
+
+	
+	Integer getNumero() {
 		return numero;
 	}
 	
-	public String getPatente() {
+	String getPatente() {
 		return patente;
 	}
 	
@@ -87,11 +131,11 @@ public class App implements MovementSensor{
 		return this.modo;
 	}
 
-	public boolean isSeInicioEstacionamiento() {
+	boolean isSeInicioEstacionamiento() {
 		return seInicioEstacionamiento;
 	}
 
-	public void setSeInicioEstacionamiento(boolean seInicioEstacionamiento) {
+	private void setSeInicioEstacionamiento(boolean seInicioEstacionamiento) {
 		this.seInicioEstacionamiento = seInicioEstacionamiento;
 	}
 
@@ -102,6 +146,24 @@ public class App implements MovementSensor{
 	public void setModo(ModoDeApp modo) {
 		this.modo = modo;
 	}
+
+	private ZonaDeEstacionamiento getUbicacionGPS() {
+		return ubicacionGPS;
+	}
+	
+	/* Este metodo es solo para testear en realidad la aplicacion le pedira a su gps la ubicacion*/
+	public void setUbicacionGPS(ZonaDeEstacionamiento ubicacionGPS) {
+		this.ubicacionGPS = ubicacionGPS;
+	}
+	
+	private int getHoraInicioDeEstacionamiento() {
+		return horaDeinicioDeEstacionamiento;
+	}
+	
+	private void setHoraDeInicioDeEstacionamiento(int inicioDeEstacionamiento) {
+		this.horaDeinicioDeEstacionamiento = inicioDeEstacionamiento;
+	}
+	
 
 	
 }
