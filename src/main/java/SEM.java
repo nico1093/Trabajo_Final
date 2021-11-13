@@ -34,7 +34,7 @@ public class SEM {
 
     public void iniciarEstacionamientoPorCompra(String patente, ZonaDeEstacionamiento zona,int horas){this.estacionamientos.put(patente, zona);}
 
-    public void iniciarEstacionamientoVirtual(String patente, ZonaDeEstacionamiento zona){
+    public void iniciarEstacionamiento(String patente, ZonaDeEstacionamiento zona){
         this.estacionamientos.put(patente, zona);
     }
 

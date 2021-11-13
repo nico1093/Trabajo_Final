@@ -5,9 +5,12 @@ public abstract class Estacionamiento {
     private SEM sem = SEM.getInstance();
     private Date inicio;
     private boolean validezEstacionamiento = true;
+    private ZonaDeEstacionamiento zona;
 
-    public Estacionamiento(String patente){
+    public Estacionamiento(String patente, ZonaDeEstacionamiento zona){
         this.patente = patente;
+        inicio = new Date();
+        this.zona = zona;
     }
 
     public void setPatente(String patente) {
@@ -26,9 +29,11 @@ public abstract class Estacionamiento {
         return sem;
     }
 
-    public boolean isValidezEstacionamiento() {
-        return validezEstacionamiento;
+    public ZonaDeEstacionamiento getZona() {
+        return zona;
     }
+
+    public abstract boolean isValidezEstacionamiento();
 
     public void anularValidez(){
         validezEstacionamiento = false;
