@@ -24,5 +24,11 @@ public class EstacionamientoPorCompra extends Estacionamiento {
 			return this.isValidezEstacionamiento();
 		}
 	}
+
+	@Override
+	protected void revisarValidez() {
+		// TODO Auto-generated method stub
+		
+	}
    
 }

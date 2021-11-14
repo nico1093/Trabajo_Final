@@ -60,10 +60,11 @@ public class SEM {
 
 
 
-	public void iniciarEstacionamientoVirtual(String patente, ZonaDeEstacionamiento zona, Integer numero){
+	public void iniciarEstacionamientoVirtual(String patente, ZonaDeEstacionamiento zona, Integer numero, int finEstimado){
         this.estacionamientos.put(patente, zona);
         Estacionamiento estacionamiento = new EstacionamientoVirtual(patente, numero);
         zona.agregarEstacionamiento(estacionamiento);
+        estacionamiento.activarSeguimiento();
         this.notificarFinalizacionDeEstacionamiento(estacionamiento);
     }
 
@@ -121,8 +122,8 @@ public class SEM {
     	
     }
 
-    public void generarInfraccion(String patente, ZonaDeEstacionamiento zonaEncargada){
-        this.infracciones.add(new Infraccion(patente, 0, zonaEncargada));
+    public void generarInfraccion(String patente, ZonaDeEstacionamiento zonaEncargada, Inspector inspector){
+        this.infracciones.add(new Infraccion(patente, zonaEncargada, inspector));
     }
 
     public double saldoDeUsuario(Integer numero) {
@@ -134,6 +135,10 @@ public class SEM {
     	}
     }
     
+    public void finalizoUnEstacionamiento(Estacionamiento estacionamiento) {
+    	this.notificarFinalizacionDeEstacionamiento(estacionamiento);
+    	
+    }
     public void suscribirEntidad(ServicioDeAlerta servicio) {
     	this.listeners.add(servicio);
     }
@@ -167,5 +172,6 @@ public class SEM {
 	public HashMap<Integer, Double> getRegistroSaldo() {
 		return registroSaldo;
 	}
+
 
 }

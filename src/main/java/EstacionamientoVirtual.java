@@ -1,20 +1,14 @@
 package main.java;
 
+import java.sql.Date;
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class EstacionamientoVirtual extends Estacionamiento {
     private int phone;
     
-    Timer timer = new Timer ();
-    
-    TimerTask tarea = new TimerTask() {
-		
-		@Override
-		public void run() {
-			
-		}
-	};
+   
 	
 
     public EstacionamientoVirtual(String patente, int phone){
@@ -43,5 +37,11 @@ public class EstacionamientoVirtual extends Estacionamiento {
 	@Override
 	public boolean esVigente() {
 		return this.isValidezEstacionamiento();
+	}
+
+	@Override
+	protected void revisarValidez() {
+		System.out.println( Calendar.getInstance().getTime());
+		
 	}
 }
