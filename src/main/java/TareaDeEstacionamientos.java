@@ -8,6 +8,7 @@ public class TareaDeEstacionamientos extends TimerTask {
 
 	@Override
 	public void run() {
+		
 		this.getEstacionamiento().revisarValidez();
 		
 	}

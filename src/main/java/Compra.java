@@ -12,37 +12,19 @@ public abstract class Compra { // registro de compra de estacionamiento
 		this.fecha= new Date();
 	}
 
+	public Date getFecha() {
+		return fecha;
+	}
+
 	public int getNroControl() {
 		return nroControl;
 	}
 
-	public void setNroControl(int nroControl) {
-		this.nroControl = nroControl;
-	}
 
 	public Comercio getComercio() {
 		return comercio;
 	}
 
-	public void setComercio(Comercio comercio) {
-		this.comercio = comercio;
-	}
-
-	public Date getFecha() {
-		return fecha;
-	}
-
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
-	}
-
-	public String getPatente() {
-		return patente;
-	}
-
-	public void setPatente(String patente) {
-		this.patente = patente;
-	}
 	
 	
 	

@@ -7,14 +7,20 @@ public abstract class Estacionamiento {
     private String patente;
     private SEM sem = SEM.getInstance();
     private Date inicio;
-    private boolean validezEstacionamiento = true;
+    protected Date fin;
     
-    public void activarSeguimiento() {
-    	Timer timer = new Timer();
-    	TareaDeEstacionamientos tarea = new TareaDeEstacionamientos(this);
-    	timer.schedule(tarea, 0, 1000 * 60 * 60);
-    	
-    }
+    public Date getFin() {
+		return fin;
+	}
+
+
+	public void setFin(Date fin) {
+		this.fin = fin;
+	}
+
+	private boolean validezEstacionamiento = true;
+    
+    public abstract void activarSeguimiento();
     
 
     public Estacionamiento(String patente){
@@ -42,7 +48,8 @@ public abstract class Estacionamiento {
     }
 
     public void anularValidez(){
-        validezEstacionamiento = false;
+        this.validezEstacionamiento = false;
+        this.getSem().finalizoUnEstacionamiento(this);
     }
     
     public abstract boolean esVigente();

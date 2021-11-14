@@ -1,15 +1,12 @@
 package main.java;
 
-import java.sql.Date;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class EstacionamientoVirtual extends Estacionamiento {
     private int phone;
     
-   
-	
 
     public EstacionamientoVirtual(String patente, int phone){
         super(patente);
@@ -41,7 +38,24 @@ public class EstacionamientoVirtual extends Estacionamiento {
 
 	@Override
 	protected void revisarValidez() {
-		System.out.println( Calendar.getInstance().getTime());
-		
+		if(super.getSem().saldoDeUsuario(phone) > this.getSem().getPrecioPorHora()){
+            getSem().generarPagoVirtual(phone, this.getSem().getPrecioPorHora());
+        }else{
+        	finalizar();
+            /*Cambiar la hora de finalizacion*/
+        }
 	}
+
+	private void finalizar() {
+		this.setFin(new Date());
+		super.anularValidez();
+	}
+
+	@Override
+	public void activarSeguimiento() {
+	    	Timer timer = new Timer();
+	    	TareaDeEstacionamientos tarea = new TareaDeEstacionamientos(this);
+	    	timer.schedule(tarea, 0, 1000 * 60 * 60);  	
+	    }
+		
 }

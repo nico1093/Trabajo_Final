@@ -1,6 +1,8 @@
 package main.java;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class App implements MovementSensor{
 
@@ -11,7 +13,7 @@ public class App implements MovementSensor{
 	private boolean seInicioEstacionamiento;
 	private ZonaDeEstacionamiento ubicacionGPS;
 	private SEM sem = SEM.getInstance();
-	private int horaDeinicioDeEstacionamiento ;
+	private Date horaDeinicioDeEstacionamiento ;
 	
 	
 
@@ -64,7 +66,6 @@ public class App implements MovementSensor{
 	
 	public void inicarEstacionamiento() {
 		if(sem.tieneSaldoSuficiente(numero) && this.seEncuentraEnUnaZonaEstacionamiento()) {
-			
 			this.setSeInicioEstacionamiento(true);
 			this.registrarHora();
 			sem.iniciarEstacionamientoVirtual(this.getPatente(), this.getUbicacionGPS(), this.getNumero());
@@ -77,18 +78,23 @@ public class App implements MovementSensor{
 	}
 	
 	  boolean seEncuentraEnUnaZonaEstacionamiento() {
-		 
-		return this.getUbicacionGPS() instanceof ZonaDeEstacionamiento;
+		  if (this.getUbicacionGPS() == null) {
+			  return false;
+		  }
+		  else {
+			  return this.getUbicacionGPS().seEncuentraEnZonaDeEstacionamiento();
+			   }
 	}
 
-	private int horaMaximaDeEstacionamiento() {
-		
-		return  (int) Math.min( (this.getHoraInicioDeEstacionamiento() + (this.saldoDeUsuario() / sem.getPrecioPorHora())) , 20) ;
+	private Date horaMaximaDeEstacionamiento() {
+		int horaMaxima = (int) Math.min( (this.getHoraInicioDeEstacionamiento().getHours() + (this.saldoDeUsuario() / sem.getPrecioPorHora())) , 20);
+		Date now = new Date();
+		now.setHours(horaMaxima);
+		return  now ;
 	}
 	
 	private void registrarHora() {
-		Calendar now = Calendar.getInstance();
-		this.setHoraDeInicioDeEstacionamiento(now.get(Calendar.HOUR_OF_DAY));
+		this.setHoraDeInicioDeEstacionamiento(new Date());
 	}
 
 
@@ -98,19 +104,18 @@ public class App implements MovementSensor{
 			sem.finalizarEstacionamientoVirtual(patente);
 			System.out.print(this.getHoraInicioDeEstacionamiento());
 			System.out.print(this.horaActual());
-			System.out.print(this.horaActual() - this.getHoraInicioDeEstacionamiento());
+			System.out.print(this.horaActual().getHours() - this.getHoraInicioDeEstacionamiento().getHours());
 			System.out.print(this.costeTotalDeEstacionamiento());
 			
 		}		
 	}
 	
 	private double costeTotalDeEstacionamiento() {
-		return (this.horaActual() - this.getHoraInicioDeEstacionamiento()) * sem.getPrecioPorHora();
+		return (this.horaActual().getHours() - this.getHoraInicioDeEstacionamiento().getHours()) * sem.getPrecioPorHora();
 	}
 
-	private int horaActual() {
-		Calendar now = Calendar.getInstance();
-		return Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+	private Date horaActual() {
+		return new Date();
 	}
 
 	
@@ -155,14 +160,14 @@ public class App implements MovementSensor{
 		this.ubicacionGPS = ubicacionGPS;
 	}
 	
-	private int getHoraInicioDeEstacionamiento() {
+	private Date getHoraInicioDeEstacionamiento() {
 		return horaDeinicioDeEstacionamiento;
 	}
 	
-	private void setHoraDeInicioDeEstacionamiento(int inicioDeEstacionamiento) {
-		this.horaDeinicioDeEstacionamiento = inicioDeEstacionamiento;
+	private void setHoraDeInicioDeEstacionamiento(Date date) {
+		this.horaDeinicioDeEstacionamiento = date;
 	}
 	
-
+	
 	
 }

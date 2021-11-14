@@ -4,8 +4,8 @@ public class Inspector {
     private final SEM sem = SEM.getInstance();
     private ZonaDeEstacionamiento zonaEncargada;
 
-    public Inspector(ZonaDeEstacionamiento zonaEncargada){
-        this.zonaEncargada = zonaEncargada;
+    public Inspector(){
+    	super();
     }
 
     public void inspeccionarEstacionamiento(String patente){
@@ -14,8 +14,22 @@ public class Inspector {
          * valido este generara una infraccion.
          */
         if(!sem.esValidoElEstacionamiento(patente)){
-            sem.generarInfraccion(patente, this.zonaEncargada);
+            sem.generarInfraccion(patente, this.zonaEncargada, this);
         }
     }
+
+	public ZonaDeEstacionamiento getZonaEncargada() {
+		return zonaEncargada;
+	}
+
+	public void setZonaEncargada(ZonaDeEstacionamiento zonaEncargada) {
+		this.zonaEncargada = zonaEncargada;
+	}
+
+	public SEM getSem() {
+		return sem;
+	}
+    
+    
 
 }

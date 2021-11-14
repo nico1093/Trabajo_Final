@@ -17,7 +17,7 @@ public class ZonaDeEstacionamiento {
 		this.sem = sem;
 		this.encargado = encargado;
 		this.comercios = comercios;
-		this.estacionados = new ArrayList<Estacionamiento>();;
+		this.estacionados = new ArrayList<Estacionamiento>();
 	}
 
 
@@ -94,5 +94,17 @@ public class ZonaDeEstacionamiento {
 	        }
 		}
 		return false;
+	}
+	
+	 Estacionamiento estacionamiento(String patente) {
+		 
+	 }
+
+
+
+
+	public boolean seEncuentraEnZonaDeEstacionamiento() {
+		
+		return true;
 	}
 }

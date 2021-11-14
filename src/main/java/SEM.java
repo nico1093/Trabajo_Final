@@ -1,6 +1,7 @@
 package main.java;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,24 +35,24 @@ public class SEM {
 
     public boolean esValidoElEstacionamiento(String patente){
         ZonaDeEstacionamiento zona = this.getEstacionamientos().get(patente);
-    	return zona.estacionamientoEsVigente(patente) ;
+    	return zona.estacionamiento(patente) ;
     }
 
     public void iniciarEstacionamientoPorCompra(String patente, ZonaDeEstacionamiento zona,int horas, Comercio puntoDeVenta){
     	this.estacionamientos.put(patente, zona);
-    	EstacionamientoPorCompra estacionamiento = new EstacionamientoPorCompra(patente, horas, this.agregarHoraDeHoras(patente, horas, puntoDeVenta));
+    	EstacionamientoPorCompra estacionamiento = new EstacionamientoPorCompra(patente, horas, this.agregarCompraDeHoras(patente, horas, puntoDeVenta));
     	zona.agregarEstacionamiento(estacionamiento);
     	this.notificarInicioDeEstacionamiento(estacionamiento);
     }
 
-    private void notificarInicioDeEstacionamiento(EstacionamientoPorCompra estacionamiento) {
+    private void notificarInicioDeEstacionamiento(Estacionamiento estacionamiento) {
     	for (ServicioDeAlerta listener : this.listeners) {
 			listener.seInicioEstacionamiento(estacionamiento);
 		}
 		
 	}
 
-	private CompraPorHoraPuntual agregarHoraDeHoras(String patente, int horas, Comercio puntoDeVenta) {
+	private CompraPorHoraPuntual agregarCompraDeHoras(String patente, int horas, Comercio puntoDeVenta) {
     	/* Suma 1 al numero de control de la ultima compra */
 		CompraPorHoraPuntual compra = new CompraPorHoraPuntual(horas, this.proximoNumeroDeCompra(), puntoDeVenta);
 		this.getCompras().add(compra);
@@ -60,12 +61,12 @@ public class SEM {
 
 
 
-	public void iniciarEstacionamientoVirtual(String patente, ZonaDeEstacionamiento zona, Integer numero, int finEstimado){
+	public void iniciarEstacionamientoVirtual(String patente, ZonaDeEstacionamiento zona, Integer numero){
         this.estacionamientos.put(patente, zona);
         Estacionamiento estacionamiento = new EstacionamientoVirtual(patente, numero);
         zona.agregarEstacionamiento(estacionamiento);
         estacionamiento.activarSeguimiento();
-        this.notificarFinalizacionDeEstacionamiento(estacionamiento);
+        this.notificarInicioDeEstacionamiento(estacionamiento);
     }
 
     private void notificarFinalizacionDeEstacionamiento(Estacionamiento estacionamiento) {
@@ -112,13 +113,11 @@ public class SEM {
 	public void finalizarEstacionamientoVirtual(String patente){
         this.estacionamientos.remove(patente);
         
-    }
-
-    public EstacionamientoVirtual comprobanteDeEstacionamiento(int numero){
-    	return null;
-    }
+        
+    }    
+    
+	
     public void finalizarEstacionamientos(){
-    	
     	
     }
 
@@ -167,7 +166,12 @@ public class SEM {
 		this.precioPorHora = precioPorHora;
 	}
 	private int proximoNumeroDeCompra() {
-		return this.getCompras().get(this.getCompras().size() -1 ).getNroControl() + 1;
+		if (this.getCompras().isEmpty()) {
+			return 1;
+		}
+		else {
+			return this.getCompras().get(this.getCompras().size() -1 ).getNroControl() + 1;
+			}
 	}
 	public HashMap<Integer, Double> getRegistroSaldo() {
 		return registroSaldo;

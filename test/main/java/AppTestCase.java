@@ -1,6 +1,11 @@
 package main.java;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,12 +15,22 @@ public class AppTestCase {
 	
 	private App app;
 	private ZonaDeEstacionamiento zona; 
+	private Inspector inspector;
+	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	private SEM sem;
+	private Comercio comercio;
 	
 	
 	@BeforeEach
 	public void setUP() throws Exception {
 		app = new App(1145648612, "AB 123 CD");
-		zona = new ZonaDeEstacionamiento();
+		inspector = new Inspector();
+		zona = new ZonaDeEstacionamiento(SEM.getInstance(), inspector, new ArrayList<Comercio>());
+		sem = SEM.getInstance();
+		System.setOut(new PrintStream(outContent));
+		comercio = new Comercio("Kiosco", zona);
+		zona.getComercios().add(comercio);
+		
 	}
 
 	@Test
@@ -60,11 +75,13 @@ public class AppTestCase {
 	
 	@Test 
 	public void cuandoLlegaElMensjeWalkingConducuiendoCambiaDeEstado() {
+		app.setUbicacionGPS(zona);
 		app.driving();
 		assertTrue(app.getEstado() instanceof EstadoConduciendo);
 		app.walking();
 		assertTrue(app.getEstado() instanceof EstadoCaminando);
 	}
+	
 	
 	@Test
 	public void laAppSeEncuentraEnUnaZonaDeEstacionamiento() {
@@ -72,5 +89,63 @@ public class AppTestCase {
 		assertTrue(app.seEncuentraEnUnaZonaEstacionamiento());
 	}
 	
+	@Test
+	public void alarmaDeInicioDeEstacionamiento() {
+		app.setUbicacionGPS(zona);
+		app.driving();
+		app.walking();
+		assertEquals("No se inicio el estacionamiento", outContent.toString());
+	}
+	
+	@Test
+	public void mensajeDeUsuarioSinCredito() {
+		app.inicarEstacionamiento();
+		assertEquals("saldo insuficiente. Estacionamiento no permitido", outContent.toString());
+	}
+	
+	@Test 
+	public void obtenerSaldo() {
+		comercio.recargarAplicativo(1145648612, 200);
+		assertEquals(app.saldoDeUsuario(), (double) 200);
+	}
+	
+	@Test
+	public void iniciarEstacionamiento() {
+		app.setUbicacionGPS(zona);
+		comercio.recargarAplicativo(1145648612, 200);
+		app.inicarEstacionamiento();
+		assertTrue(app.isSeInicioEstacionamiento());
+	}
+	
+	@Test
+	public void finalizarEstacionamiento() {
+		app.setUbicacionGPS(zona);
+		comercio.recargarAplicativo(1145648612, 200);
+		app.inicarEstacionamiento();
+		app.finalizarEstacionamiento();
+		assertFalse(app.isSeInicioEstacionamiento());
+	}
+	
+	@Test
+	public void iniciarEstacionamientoAutomatico() {
+		app.cambiarModoAutomatico();
+		comercio.recargarAplicativo(1145648612, 200);
+		app.setUbicacionGPS(zona);
+		app.driving();
+		app.walking();
+		assertTrue(app.isSeInicioEstacionamiento());
+	}
+	
+	@Test
+	public void finalizarEstacionamientoAutomatico() {
+		app.cambiarModoAutomatico();
+		comercio.recargarAplicativo(1145648612, 200);
+		app.setUbicacionGPS(zona);
+		app.driving();
+		app.walking();
+		assertTrue(app.isSeInicioEstacionamiento());
+	}
+	
+
 	
 }

@@ -1,17 +1,17 @@
 package main.java;
 
 import java.util.Date;
+import java.util.Timer;
 
 public class EstacionamientoPorCompra extends Estacionamiento {
     private int horasFijas;
-    private Date fin;
     private CompraPorHoraPuntual compra;
 
     public EstacionamientoPorCompra(String patente, int horasFijas, CompraPorHoraPuntual compra){
         super(patente);
         this.horasFijas = horasFijas;
         this.compra = compra;
-        fin = new Date(super.getInicio().getHours() + horasFijas);
+        this.fin = new Date(super.getInicio().getHours() + horasFijas);
     }
 
 	@Override
@@ -27,8 +27,14 @@ public class EstacionamientoPorCompra extends Estacionamiento {
 
 	@Override
 	protected void revisarValidez() {
-		// TODO Auto-generated method stub
-		
+		this.anularValidez();
 	}
-   
+
+	@Override
+	public void activarSeguimiento() {
+	    	Timer timer = new Timer();
+	    	TareaDeEstacionamientos tarea = new TareaDeEstacionamientos(this);
+	    	timer.schedule(tarea, 0, this.horasFijas);    		
+	}
+	
 }

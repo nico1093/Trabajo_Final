@@ -12,8 +12,8 @@ public class Manual implements ModoDeApp {
 
 	@Override
 	public void conductorCambioDeConducirACaminar(App app) {
-		if( app.seEncuentraEnUnaZonaEstacionamiento() && !app.isSeInicioEstacionamiento()) {
-			app.mostrarAlertaDeFinalizacionDeEstacionamiento();
+		if(!app.isSeInicioEstacionamiento() && app.seEncuentraEnUnaZonaEstacionamiento()) {
+			app.mostrarAlertaDeIncioDeEstacionamiento();
 		}
 		
 	}
