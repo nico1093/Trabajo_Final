@@ -7,7 +7,7 @@ public abstract class Compra { // registro de compra de estacionamiento
 	private Comercio comercio;
 	private Date fecha;
 	
-	public Compra() {
+	public Compra(int nroControl, String patente, Comercio comercio) {
 		this.nroControl= nroControl;
 		this.patente= patente;
 		this.comercio= comercio;
