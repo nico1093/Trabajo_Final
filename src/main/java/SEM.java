@@ -1,9 +1,14 @@
+package main.java;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 
 public class SEM {
     private static SEM instancia;
     private List<Infraccion> infracciones;
+    private Double precioPorHora = (double) 40;
     /**
       El string(patente) es la forma univoca de identificar un vehiculo estacionado en esa zona.
       Y el mismo vehiculo no se podra visualizar en dos zonas de estacionamiento simultaneamente.
@@ -14,6 +19,8 @@ public class SEM {
      * numero telefonico.
      * */
     private HashMap<Integer, Double> registroSaldo = new HashMap<Integer, Double>();
+    private List<Compra> compras = new ArrayList<Compra>();
+    private List<ServicioDeAlerta> listeners = new ArrayList <ServicioDeAlerta>();
 
     private SEM(){}
 
@@ -24,43 +31,141 @@ public class SEM {
         return instancia;
     }
 
-    public HashMap<Integer, Double> getRegistroSaldo() {
-        return registroSaldo;
-    }
 
     public boolean esValidoElEstacionamiento(String patente){
-        return true;
+        ZonaDeEstacionamiento zona = this.getEstacionamientos().get(patente);
+    	return zona.estacionamientoEsVigente(patente) ;
     }
 
-    public void iniciarEstacionamientoPorCompra(String patente, ZonaDeEstacionamiento zona,int horas){this.estacionamientos.put(patente, zona);}
+    public void iniciarEstacionamientoPorCompra(String patente, ZonaDeEstacionamiento zona,int horas, Comercio puntoDeVenta){
+    	this.estacionamientos.put(patente, zona);
+    	EstacionamientoPorCompra estacionamiento = new EstacionamientoPorCompra(patente, horas, this.agregarHoraDeHoras(patente, horas, puntoDeVenta));
+    	zona.agregarEstacionamiento(estacionamiento);
+    	this.notificarInicioDeEstacionamiento(estacionamiento);
+    }
 
-    public void iniciarEstacionamientoVirtual(String patente, ZonaDeEstacionamiento zona){
+    private void notificarInicioDeEstacionamiento(EstacionamientoPorCompra estacionamiento) {
+    	for (ServicioDeAlerta listener : this.listeners) {
+			listener.seInicioEstacionamiento(estacionamiento);
+		}
+		
+	}
+
+	private CompraPorHoraPuntual agregarHoraDeHoras(String patente, int horas, Comercio puntoDeVenta) {
+    	/* Suma 1 al numero de control de la ultima compra */
+		CompraPorHoraPuntual compra = new CompraPorHoraPuntual(horas, this.proximoNumeroDeCompra(), puntoDeVenta);
+		this.getCompras().add(compra);
+    	return compra;
+	}
+
+
+
+	public void iniciarEstacionamientoVirtual(String patente, ZonaDeEstacionamiento zona, Integer numero){
         this.estacionamientos.put(patente, zona);
+        Estacionamiento estacionamiento = new EstacionamientoVirtual(patente, numero);
+        zona.agregarEstacionamiento(estacionamiento);
+        this.notificarFinalizacionDeEstacionamiento(estacionamiento);
     }
 
-    public void generarPagoVirtual(int number, double monto) {
+    private void notificarFinalizacionDeEstacionamiento(Estacionamiento estacionamiento) {
+    	for (ServicioDeAlerta listener : this.listeners) {
+			listener.seFinalizoEstacionamiento(estacionamiento);
+		}
+		
+	}
+
+	public void generarPagoVirtual(int number, double monto) {
         /**
           El usuario debe estar registrado con un mondo.
          */
         this.registroSaldo.put(number, registroSaldo.get(number) - monto);
     }
 
-    public void cargarSaldo(int numero, double saldo){
+    public void cargarSaldo(int numero, double saldo, Comercio comercio){
         if(this.registroSaldo.containsKey(numero)){
             this.registroSaldo.put(numero, registroSaldo.get(numero) + saldo);
+            this.agregarCompraDeRecarga(numero,saldo,comercio);
         }else{
             this.registroSaldo.put(numero, saldo);
+            this.agregarCompraDeRecarga(numero,saldo,comercio);
         }
     }
 
-    public void finalizarEstacionamientoVirtual(String patente){
+    private void agregarCompraDeRecarga(int numero, double saldo, Comercio comercio) {
+		Compra compra = new CompraPorRecarga(this.proximoNumeroDeCompra(), comercio, numero, saldo);
+    	this.getCompras().add(compra);
+		this.notifcarRecarga(compra);
+	}
+
+    private void notifcarRecarga(Compra compra) {
+    	for (ServicioDeAlerta listener : this.listeners) {
+			listener.seRealizoUnaRecarga(compra);
+		}
+		
+	}
+
+	public boolean tieneSaldoSuficiente(Integer numero) {
+    	return this.getRegistroSaldo().containsKey(numero) && this.saldoDeUsuario(numero) > 40;
+    }
+    
+	public void finalizarEstacionamientoVirtual(String patente){
         this.estacionamientos.remove(patente);
+        
     }
 
-    public EstacionamientoVirtual comprobanteDeEstacionamiento(int numero){return null;}
-    public void finalizarEstacionamientos(){}
-
-    public void generarInfraccion(String patente){
-        this.infracciones.add(new Infraccion(patente, 0));
+    public EstacionamientoVirtual comprobanteDeEstacionamiento(int numero){
+    	return null;
     }
+    public void finalizarEstacionamientos(){
+    	
+    	
+    }
+
+    public void generarInfraccion(String patente, ZonaDeEstacionamiento zonaEncargada){
+        this.infracciones.add(new Infraccion(patente, 0, zonaEncargada));
+    }
+
+    public double saldoDeUsuario(Integer numero) {
+    	if (this.getRegistroSaldo().containsKey(numero)) {
+    		return this.getRegistroSaldo().get(numero);
+    	}
+    	else {
+    		return 0;
+    	}
+    }
+    
+    public void suscribirEntidad(ServicioDeAlerta servicio) {
+    	this.listeners.add(servicio);
+    }
+    
+    public static SEM getInstancia() {
+    	return instancia;
+    }
+    
+    public List<Infraccion> getInfracciones() {
+    	return infracciones;
+    }
+    
+    public HashMap<String, ZonaDeEstacionamiento> getEstacionamientos() {
+    	return estacionamientos;
+    }
+    
+    public List<Compra> getCompras() {
+    	return compras;
+    }
+
+	public Double getPrecioPorHora() {
+		return precioPorHora;
+	}
+
+	public void setPrecioPorHora(Double precioPorHora) {
+		this.precioPorHora = precioPorHora;
+	}
+	private int proximoNumeroDeCompra() {
+		return this.getCompras().get(this.getCompras().size() -1 ).getNroControl() + 1;
+	}
+	public HashMap<Integer, Double> getRegistroSaldo() {
+		return registroSaldo;
+	}
+
 }

@@ -2,9 +2,10 @@ package main.java;
 
 public class CompraPorHoraPuntual extends Compra {
 	private int HorasCompradas;
+	private String patente;
 
-	public CompraPorHoraPuntual(int horasCompradas, int nroControl, String patente, Comercio comercio) {
-		super(nroControl, patente, comercio);
+	public CompraPorHoraPuntual(int horasCompradas, int nroControl, Comercio comercio) {
+		super(nroControl, comercio);
 		HorasCompradas = horasCompradas;
 	}
 	

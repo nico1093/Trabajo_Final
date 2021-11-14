@@ -1,3 +1,5 @@
+package main.java;
+
 public class Comercio {
     private String id;
     private final SEM sem = SEM.getInstance();
@@ -9,10 +11,10 @@ public class Comercio {
     }
 
     public void recargarAplicativo(int number, double monto){
-        sem.cargarSaldo(number, monto);
+        sem.cargarSaldo(number, monto, this);
     }
 
     public void generarEstacionamiento(String patente, int hours){
-        sem.iniciarEstacionamientoPorCompra(patente, null, hours);
+        sem.iniciarEstacionamientoPorCompra(patente, this.zona, hours, this);
     }
 }

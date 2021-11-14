@@ -1,5 +1,6 @@
 package main.java;
 
+
 public class Automatico implements ModoDeApp {
 
 

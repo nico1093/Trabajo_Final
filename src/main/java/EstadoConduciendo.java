@@ -1,5 +1,4 @@
 package main.java;
-
 public class EstadoConduciendo implements EstadoDeMovimiento {
 
 	@Override

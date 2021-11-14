@@ -1,7 +1,21 @@
+package main.java;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class EstacionamientoVirtual extends Estacionamiento {
     private int phone;
-    private final double valorPorHora = 40;
-
+    
+    Timer timer = new Timer ();
+    
+    TimerTask tarea = new TimerTask() {
+		
+		@Override
+		public void run() {
+			
+		}
+	};
+	
 
     public EstacionamientoVirtual(String patente, int phone){
         super(patente);
@@ -16,15 +30,18 @@ public class EstacionamientoVirtual extends Estacionamiento {
         return phone;
     }
 
-    public double getValorPorHora() {
-        return valorPorHora;
-    }
 
     public void cobrarHoraDeEstacionamiento(){
-        if(super.getSem().getRegistroSaldo().get(phone) > valorPorHora){
-            getSem().generarPagoVirtual(phone, valorPorHora);
+        if(super.getSem().saldoDeUsuario(phone) > this.getSem().getPrecioPorHora()){
+            getSem().generarPagoVirtual(phone, this.getSem().getPrecioPorHora());
         }else{
             super.anularValidez();
+            /*Cambiar la hora de finalizacion*/
         }
     }
+
+	@Override
+	public boolean esVigente() {
+		return this.isValidezEstacionamiento();
+	}
 }

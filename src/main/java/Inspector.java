@@ -1,3 +1,5 @@
+package main.java;
+
 public class Inspector {
     private final SEM sem = SEM.getInstance();
     private ZonaDeEstacionamiento zonaEncargada;
@@ -12,7 +14,7 @@ public class Inspector {
          * valido este generara una infraccion.
          */
         if(!sem.esValidoElEstacionamiento(patente)){
-            sem.generarInfraccion(patente);
+            sem.generarInfraccion(patente, this.zonaEncargada);
         }
     }
 

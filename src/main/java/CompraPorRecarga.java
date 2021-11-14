@@ -5,6 +5,11 @@ public class CompraPorRecarga extends Compra {
 	private double monto;
 	
 
+	public CompraPorRecarga(int nroControl, Comercio comercio, int numero, double monto) {
+		super(nroControl, comercio);
+		this.numero = numero;
+		this.monto = monto;
+	}
 	
 	
 }

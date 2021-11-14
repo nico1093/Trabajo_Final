@@ -1,3 +1,5 @@
+package main.java;
+
 import java.util.Date;
 
 public abstract class Estacionamiento {
@@ -33,5 +35,7 @@ public abstract class Estacionamiento {
     public void anularValidez(){
         validezEstacionamiento = false;
     }
+    
+    public abstract boolean esVigente();
 
 }

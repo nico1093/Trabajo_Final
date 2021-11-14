@@ -9,11 +9,13 @@ import org.junit.jupiter.api.BeforeEach;
 public class AppTestCase {
 	
 	private App app;
+	private ZonaDeEstacionamiento zona; 
 	
 	
 	@BeforeEach
 	public void setUP() throws Exception {
 		app = new App(1145648612, "AB 123 CD");
+		zona = new ZonaDeEstacionamiento();
 	}
 
 	@Test
@@ -62,6 +64,12 @@ public class AppTestCase {
 		assertTrue(app.getEstado() instanceof EstadoConduciendo);
 		app.walking();
 		assertTrue(app.getEstado() instanceof EstadoCaminando);
+	}
+	
+	@Test
+	public void laAppSeEncuentraEnUnaZonaDeEstacionamiento() {
+		app.setUbicacionGPS(zona);
+		assertTrue(app.seEncuentraEnUnaZonaEstacionamiento());
 	}
 	
 	

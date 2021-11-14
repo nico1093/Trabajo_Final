@@ -3,13 +3,11 @@ import java.util.Date;
 
 public abstract class Compra { // registro de compra de estacionamiento
 	private int nroControl;
-	private String patente;
 	private Comercio comercio;
 	private Date fecha;
 	
-	public Compra(int nroControl, String patente, Comercio comercio) {
+	public Compra(int nroControl, Comercio comercio) {
 		this.nroControl= nroControl;
-		this.patente= patente;
 		this.comercio= comercio;
 		this.fecha= new Date();
 	}
