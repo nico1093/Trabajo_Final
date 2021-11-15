@@ -11,6 +11,7 @@ public class EstacionamientoVirtual extends Estacionamiento {
     public EstacionamientoVirtual(String patente, int phone){
         super(patente);
         this.phone = phone;
+        this.activarSeguimiento();
     }
 
     public void setPhone(int phone) {
@@ -22,40 +23,27 @@ public class EstacionamientoVirtual extends Estacionamiento {
     }
 
 
-    public void cobrarHoraDeEstacionamiento(){
-        if(super.getSem().saldoDeUsuario(phone) > this.getSem().getPrecioPorHora()){
-            getSem().generarPagoVirtual(phone, this.getSem().getPrecioPorHora());
-        }else{
-            super.anularValidez();
-            /*Cambiar la hora de finalizacion*/
-        }
-    }
-
-	@Override
-	public boolean esVigente() {
-		return this.isValidezEstacionamiento();
-	}
-
 	@Override
 	protected void revisarValidez() {
 		if(super.getSem().saldoDeUsuario(phone) > this.getSem().getPrecioPorHora()){
             getSem().generarPagoVirtual(phone, this.getSem().getPrecioPorHora());
         }else{
         	finalizar();
-            /*Cambiar la hora de finalizacion*/
         }
+		
 	}
 
-	private void finalizar() {
+	void finalizar() {
 		this.setFin(new Date());
 		super.anularValidez();
 	}
 
 	@Override
 	public void activarSeguimiento() {
-	    	Timer timer = new Timer();
 	    	TareaDeEstacionamientos tarea = new TareaDeEstacionamientos(this);
-	    	timer.schedule(tarea, 0, 1000 * 60 * 60);  	
+	    	this.timer.scheduleAtFixedRate(tarea, 0, 1000*60*60);  	
 	    }
+	
+	
 		
 }

@@ -69,10 +69,10 @@ public class App implements MovementSensor{
 			this.setSeInicioEstacionamiento(true);
 			this.registrarHora();
 			sem.iniciarEstacionamientoVirtual(this.getPatente(), this.getUbicacionGPS(), this.getNumero());
-			System.out.print(this.getHoraInicioDeEstacionamiento());
-			System.out.print(this.horaMaximaDeEstacionamiento());
+			System.out.println(this.getHoraInicioDeEstacionamiento());
+			System.out.println(this.horaMaximaDeEstacionamiento());
 		}
-		else {
+		else if(!sem.tieneSaldoSuficiente(numero)) {
 			System.out.print("saldo insuficiente. Estacionamiento no permitido");
 		}
 	}
@@ -102,16 +102,16 @@ public class App implements MovementSensor{
 		if(this.isSeInicioEstacionamiento()) {
 			this.setSeInicioEstacionamiento(false);
 			sem.finalizarEstacionamientoVirtual(patente);
-			System.out.print(this.getHoraInicioDeEstacionamiento());
-			System.out.print(this.horaActual());
-			System.out.print(this.horaActual().getHours() - this.getHoraInicioDeEstacionamiento().getHours());
-			System.out.print(this.costeTotalDeEstacionamiento());
+			System.out.println(this.getHoraInicioDeEstacionamiento());
+			System.out.println(this.horaActual());
+			System.out.println(this.horaActual().getHours() - this.getHoraInicioDeEstacionamiento().getHours());
+			System.out.println(this.costeTotalDeEstacionamiento());
 			
 		}		
 	}
 	
 	private double costeTotalDeEstacionamiento() {
-		return (this.horaActual().getHours() - this.getHoraInicioDeEstacionamiento().getHours()) * sem.getPrecioPorHora();
+		return Math.max ((this.horaActual().getHours() - this.getHoraInicioDeEstacionamiento().getHours()) * sem.getPrecioPorHora(), 40);
 	}
 
 	private Date horaActual() {

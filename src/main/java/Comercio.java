@@ -17,4 +17,14 @@ public class Comercio {
     public void generarEstacionamiento(String patente, int hours){
         sem.iniciarEstacionamientoPorCompra(patente, this.zona, hours, this);
     }
+
+	public String getId() {
+		return id;
+	}
+
+	public ZonaDeEstacionamiento getZona() {
+		return zona;
+	}
+    
+    
 }

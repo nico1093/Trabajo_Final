@@ -1,5 +1,7 @@
 package main.java;
 
+
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,12 +23,14 @@ public class AppTestCase {
 	private Comercio comercio;
 	
 	
+	
 	@BeforeEach
 	public void setUP() throws Exception {
+		sem = SEM.getInstance();
+		sem.reset();
 		app = new App(1145648612, "AB 123 CD");
 		inspector = new Inspector();
 		zona = new ZonaDeEstacionamiento(SEM.getInstance(), inspector, new ArrayList<Comercio>());
-		sem = SEM.getInstance();
 		System.setOut(new PrintStream(outContent));
 		comercio = new Comercio("Kiosco", zona);
 		zona.getComercios().add(comercio);
@@ -90,6 +94,12 @@ public class AppTestCase {
 	}
 	
 	@Test
+	public void laAppNoSeEncuentraEnUnaZonaDeEstacionamiento() {
+		assertFalse(app.seEncuentraEnUnaZonaEstacionamiento());
+	}
+
+	
+	@Test
 	public void alarmaDeInicioDeEstacionamiento() {
 		app.setUbicacionGPS(zona);
 		app.driving();
@@ -109,12 +119,14 @@ public class AppTestCase {
 		assertEquals(app.saldoDeUsuario(), (double) 200);
 	}
 	
+	
 	@Test
 	public void iniciarEstacionamiento() {
 		app.setUbicacionGPS(zona);
 		comercio.recargarAplicativo(1145648612, 200);
 		app.inicarEstacionamiento();
 		assertTrue(app.isSeInicioEstacionamiento());
+		assertEquals(app.saldoDeUsuario() ,160);
 	}
 	
 	@Test
@@ -124,16 +136,19 @@ public class AppTestCase {
 		app.inicarEstacionamiento();
 		app.finalizarEstacionamiento();
 		assertFalse(app.isSeInicioEstacionamiento());
+		assertEquals(app.saldoDeUsuario() ,160);
 	}
 	
 	@Test
 	public void iniciarEstacionamientoAutomatico() {
+		sem.reset();
 		app.cambiarModoAutomatico();
-		comercio.recargarAplicativo(1145648612, 200);
+		comercio.recargarAplicativo(1145648612, 300);
 		app.setUbicacionGPS(zona);
 		app.driving();
 		app.walking();
 		assertTrue(app.isSeInicioEstacionamiento());
+		assertEquals(app.saldoDeUsuario() ,260);
 	}
 	
 	@Test
@@ -144,8 +159,20 @@ public class AppTestCase {
 		app.driving();
 		app.walking();
 		assertTrue(app.isSeInicioEstacionamiento());
+		assertEquals(app.saldoDeUsuario() ,160);
 	}
 	
+	/*
+	@Test
+	public void noSeFinalizoElEstacionamiento() {
+		app.setUbicacionGPS(zona);
+		comercio.recargarAplicativo(1145648612, 200);
+		app.driving();
+		app.inicarEstacionamiento();
+		app.walking();
+		assertEquals("saldo insuficiente. Estacionamiento no permitido", outContent.toString());
+	}
+	*/
 
 	
 }

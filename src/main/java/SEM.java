@@ -32,49 +32,46 @@ public class SEM {
         return instancia;
     }
 
-
-    public boolean esValidoElEstacionamiento(String patente){
-        ZonaDeEstacionamiento zona = this.getEstacionamientos().get(patente);
-    	return zona.estacionamiento(patente) ;
-    }
-
     public void iniciarEstacionamientoPorCompra(String patente, ZonaDeEstacionamiento zona,int horas, Comercio puntoDeVenta){
     	this.estacionamientos.put(patente, zona);
     	EstacionamientoPorCompra estacionamiento = new EstacionamientoPorCompra(patente, horas, this.agregarCompraDeHoras(patente, horas, puntoDeVenta));
     	zona.agregarEstacionamiento(estacionamiento);
     	this.notificarInicioDeEstacionamiento(estacionamiento);
     }
-
+    
     private void notificarInicioDeEstacionamiento(Estacionamiento estacionamiento) {
     	for (ServicioDeAlerta listener : this.listeners) {
-			listener.seInicioEstacionamiento(estacionamiento);
-		}
-		
-	}
-
-	private CompraPorHoraPuntual agregarCompraDeHoras(String patente, int horas, Comercio puntoDeVenta) {
+    		listener.seInicioEstacionamiento(estacionamiento);
+    	}
+    	
+    }
+    
+    private CompraPorHoraPuntual agregarCompraDeHoras(String patente, int horas, Comercio puntoDeVenta) {
     	/* Suma 1 al numero de control de la ultima compra */
-		CompraPorHoraPuntual compra = new CompraPorHoraPuntual(horas, this.proximoNumeroDeCompra(), puntoDeVenta);
-		this.getCompras().add(compra);
+    	CompraPorHoraPuntual compra = new CompraPorHoraPuntual(horas, this.proximoNumeroDeCompra(), puntoDeVenta);
+    	this.getCompras().add(compra);
     	return compra;
-	}
-
-
-
-	public void iniciarEstacionamientoVirtual(String patente, ZonaDeEstacionamiento zona, Integer numero){
-        this.estacionamientos.put(patente, zona);
-        Estacionamiento estacionamiento = new EstacionamientoVirtual(patente, numero);
-        zona.agregarEstacionamiento(estacionamiento);
-        estacionamiento.activarSeguimiento();
-        this.notificarInicioDeEstacionamiento(estacionamiento);
+    }
+    
+    public void iniciarEstacionamientoVirtual(String patente, ZonaDeEstacionamiento zona, Integer numero){
+    	this.estacionamientos.put(patente, zona);
+    	Estacionamiento estacionamiento = new EstacionamientoVirtual(patente, numero);
+    	zona.agregarEstacionamiento(estacionamiento);
+    	this.notificarInicioDeEstacionamiento(estacionamiento);
+    }
+    
+    void notificarFinalizacionDeEstacionamiento(Estacionamiento estacionamiento) {
+    	for (ServicioDeAlerta listener : this.listeners) {
+    		listener.seFinalizoEstacionamiento(estacionamiento);
+    	}
+    	
     }
 
-    private void notificarFinalizacionDeEstacionamiento(Estacionamiento estacionamiento) {
-    	for (ServicioDeAlerta listener : this.listeners) {
-			listener.seFinalizoEstacionamiento(estacionamiento);
-		}
-		
-	}
+    public boolean esValidoElEstacionamiento(String patente){
+        ZonaDeEstacionamiento zona = this.getEstacionamientos().get(patente);
+    	return zona.estacionamientoEsVigente(patente) ;
+    }
+
 
 	public void generarPagoVirtual(int number, double monto) {
         /**
@@ -111,9 +108,9 @@ public class SEM {
     }
     
 	public void finalizarEstacionamientoVirtual(String patente){
-        this.estacionamientos.remove(patente);
-        
-        
+       ZonaDeEstacionamiento zona = this.getEstacionamientos().get(patente);
+       EstacionamientoVirtual estacionamiento = (EstacionamientoVirtual) zona.estacionamientoDe(patente);
+       estacionamiento.finalizar();
     }    
     
 	
@@ -134,10 +131,6 @@ public class SEM {
     	}
     }
     
-    public void finalizoUnEstacionamiento(Estacionamiento estacionamiento) {
-    	this.notificarFinalizacionDeEstacionamiento(estacionamiento);
-    	
-    }
     public void suscribirEntidad(ServicioDeAlerta servicio) {
     	this.listeners.add(servicio);
     }
@@ -175,6 +168,16 @@ public class SEM {
 	}
 	public HashMap<Integer, Double> getRegistroSaldo() {
 		return registroSaldo;
+	}
+
+	public void reset() {
+		this.estacionamientos = new HashMap<String,ZonaDeEstacionamiento>();
+		this.infracciones = new ArrayList<Infraccion>();
+		this.registroSaldo = new HashMap<Integer, Double>();
+		this.compras = new  ArrayList<Compra>();
+		this.listeners = new ArrayList <ServicioDeAlerta>(); 
+		
+		
 	}
 
 

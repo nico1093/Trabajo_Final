@@ -6,8 +6,16 @@ import java.util.Timer;
 public abstract class Estacionamiento {
     private String patente;
     private SEM sem = SEM.getInstance();
-    private Date inicio;
+    private Date inicio = new Date();
     protected Date fin;
+    private boolean validezEstacionamiento = true;
+    Timer timer = new Timer();
+    
+    public abstract void activarSeguimiento();
+    
+    public Estacionamiento(String patente){
+    	this.patente = patente;
+    }
     
     public Date getFin() {
 		return fin;
@@ -18,14 +26,8 @@ public abstract class Estacionamiento {
 		this.fin = fin;
 	}
 
-	private boolean validezEstacionamiento = true;
-    
-    public abstract void activarSeguimiento();
     
 
-    public Estacionamiento(String patente){
-        this.patente = patente;
-    }
 
     public void setPatente(String patente) {
         this.patente = patente;
@@ -49,16 +51,15 @@ public abstract class Estacionamiento {
 
     public void anularValidez(){
         this.validezEstacionamiento = false;
-        this.getSem().finalizoUnEstacionamiento(this);
+        this.getSem().notificarFinalizacionDeEstacionamiento(this);;
+        timer.cancel();
     }
     
-    public abstract boolean esVigente();
+    public boolean esVigente() {
+		return this.isValidezEstacionamiento();
+	}
 
 	protected abstract void revisarValidez();
 	
-	public static void main(String[] args) {
-		Estacionamiento estacionamiento = new EstacionamientoVirtual("ABC123", 1646864896);
-		estacionamiento.activarSeguimiento();
-	}
 
 }

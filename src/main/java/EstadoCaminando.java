@@ -1,6 +1,5 @@
 package main.java;
 
-
 public class EstadoCaminando implements EstadoDeMovimiento {
 
 	@Override

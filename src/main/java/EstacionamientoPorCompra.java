@@ -12,18 +12,8 @@ public class EstacionamientoPorCompra extends Estacionamiento {
         this.horasFijas = horasFijas;
         this.compra = compra;
         this.fin = new Date(super.getInicio().getHours() + horasFijas);
+        this.activarSeguimiento();
     }
-
-	@Override
-	public boolean esVigente() {
-		if ( this.fin.compareTo(new Date()) <= 0 ) {
-			return this.isValidezEstacionamiento();
-		}
-		else {
-			this.anularValidez();
-			return this.isValidezEstacionamiento();
-		}
-	}
 
 	@Override
 	protected void revisarValidez() {

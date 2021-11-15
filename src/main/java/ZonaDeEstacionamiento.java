@@ -89,18 +89,22 @@ public class ZonaDeEstacionamiento {
 
 	public boolean estacionamientoEsVigente(String patente) {
 		for (Estacionamiento estacionamiento : this.getEstacionados()) {
-	        if (estacionamiento.getPatente().equals(patente)) {
-	            return estacionamiento.esVigente();
+	        if (estacionamiento.getPatente().equals(patente) && estacionamiento.esVigente()) {
+	            return true;
 	        }
 		}
 		return false;
 	}
 	
-	 Estacionamiento estacionamiento(String patente) {
-		 
-	 }
 
-
+	public Estacionamiento estacionamientoDe(String patente) {
+		for (Estacionamiento estacionamiento : this.getEstacionados()) {
+	        if (estacionamiento.getPatente().equals(patente)) {
+	            return estacionamiento;
+	        }
+		}
+		return null;
+	}
 
 
 	public boolean seEncuentraEnZonaDeEstacionamiento() {
