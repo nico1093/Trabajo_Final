@@ -17,9 +17,11 @@ public class Inspector {
             sem.generarInfraccion(patente, this.zonaEncargada, this);
         }
     }
+    
+
 
 	public ZonaDeEstacionamiento getZonaEncargada() {
-		return zonaEncargada;
+		return this.zonaEncargada;
 	}
 
 	public void setZonaEncargada(ZonaDeEstacionamiento zonaEncargada) {
@@ -27,7 +29,7 @@ public class Inspector {
 	}
 
 	public SEM getSem() {
-		return sem;
+		return this.sem;
 	}
     
     

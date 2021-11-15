@@ -80,9 +80,6 @@ public class ZonaDeEstacionamiento {
 
 
 
-	public void setEstacionados(List<Estacionamiento> estacionados) {
-		this.estacionados = estacionados;
-	}
 
 
 

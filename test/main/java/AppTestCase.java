@@ -162,17 +162,9 @@ public class AppTestCase {
 		assertEquals(app.saldoDeUsuario() ,160);
 	}
 	
-	/*
-	@Test
-	public void noSeFinalizoElEstacionamiento() {
-		app.setUbicacionGPS(zona);
-		comercio.recargarAplicativo(1145648612, 200);
-		app.driving();
-		app.inicarEstacionamiento();
-		app.walking();
-		assertEquals("saldo insuficiente. Estacionamiento no permitido", outContent.toString());
-	}
-	*/
+	
+	
+	
 
 	
 }

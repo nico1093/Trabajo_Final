@@ -6,6 +6,7 @@ import java.util.List;
 public class EntidadObservadora implements ServicioDeAlerta {
 	
 	private int contadorDeEstacionamientos = 0;
+	private int contadorDeCompras = 0;
 	
 	public EntidadObservadora() {
 		super();
@@ -13,14 +14,13 @@ public class EntidadObservadora implements ServicioDeAlerta {
 
 	@Override
 	public void seInicioEstacionamiento(Estacionamiento estacionamiento) {
-		this.contadorDeEstacionamientos ++;
+		this.setContadorDeEstacionamientos(this.getContadorDeEstacionamientos() + 1);
 	}
-
 
 
 	@Override
 	public void seFinalizoEstacionamiento(Estacionamiento estacionamiento) {
-		this.contadorDeEstacionamientos --;
+		this.setContadorDeEstacionamientos(this.getContadorDeEstacionamientos() + 1);;
 	}
 
 	public int getContadorDeEstacionamientos() {
@@ -29,15 +29,21 @@ public class EntidadObservadora implements ServicioDeAlerta {
 
 	@Override
 	public void seRealizoUnaRecarga(Compra compra) {
-		this.getCompras().add(compra);
+		this.setContadorDeCompras(this.getContadorDeCompras() + 1 ) ;
 
 	}
 
-	public List<Compra> getCompras() {
-		return compras;
+	public void setContadorDeEstacionamientos(int contadorDeEstacionamientos) {
+		this.contadorDeEstacionamientos = contadorDeEstacionamientos;
 	}
 
-	public List<Estacionamiento> getEstacionamientos() {
-		return estacionamientos;
+	public void setContadorDeCompras(int contadorDeCompras) {
+		this.contadorDeCompras = contadorDeCompras;
 	}
+
+	public int getContadorDeCompras() {
+		return contadorDeCompras;
+	}
+
+
 }

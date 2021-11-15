@@ -50,7 +50,7 @@ public class EntidadesCaseTest {
 		app.setUbicacionGPS(zona);
 		comercio.recargarAplicativo(1153276406, 200);
 		app.inicarEstacionamiento();
-		assertFalse( entidad.getEstacionamientos().isEmpty() );
+		assertEquals( entidad.getContadorDeEstacionamientos(), 1 );
 		app.finalizarEstacionamiento();
 		assertEquals(entidad.getContadorDeEstacionamientos(), 0);
 	}

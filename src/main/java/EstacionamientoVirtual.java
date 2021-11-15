@@ -14,10 +14,6 @@ public class EstacionamientoVirtual extends Estacionamiento {
         this.activarSeguimiento();
     }
 
-    public void setPhone(int phone) {
-        this.phone = phone;
-    }
-
     public int getPhone() {
         return phone;
     }
