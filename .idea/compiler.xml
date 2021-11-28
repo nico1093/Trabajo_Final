@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="TP_POO2" />
+        <module name="Trabajo_Final" />
       </profile>
     </annotationProcessing>
   </component>
