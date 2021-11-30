@@ -1,15 +1,12 @@
-package SEM;
+package main.java.SEM;
 
-import Controllers.ServicioDeAlerta;
-import SEM.Compras.Compra;
-import SEM.Compras.CompraPorHoraPuntual;
-import SEM.Compras.CompraPorRecarga;
-import SEM.Entidades.Comercio;
-import SEM.Entidades.Inspector;
-import SEM.Estacionamiento.Estacionamiento;
-import SEM.Estacionamiento.EstacionamientoPorCompra;
-import SEM.Estacionamiento.EstacionamientoVirtual;
-import SEM.Estacionamiento.ZonaDeEstacionamiento;
+import main.java.Controllers.*;
+import main.java.SEM.Compras.*;
+import main.java.SEM.Entidades.*;
+import main.java.SEM.Estacionamiento.Estacionamiento;
+import main.java.SEM.Estacionamiento.EstacionamientoPorCompra;
+import main.java.SEM.Estacionamiento.EstacionamientoVirtual;
+import main.java.SEM.Estacionamiento.ZonaDeEstacionamiento;
 
 import java.util.ArrayList;
 import java.util.HashMap;

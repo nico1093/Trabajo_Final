@@ -1,8 +1,8 @@
-package SEM.Estacionamiento;
+package main.java.SEM.Estacionamiento;
 
-import SEM.Entidades.Comercio;
-import SEM.Entidades.Inspector;
-import SEM.SEM;
+import main.java.SEM.Entidades.Comercio;
+import main.java.SEM.Entidades.Inspector;
+import main.java.SEM.SEM;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,22 +1,20 @@
-package EstadosModos;
+package main.java.EstadosModos;
 
-import Controllers.EstadoDeMovimiento;
-import SEM.Aplication.App;
+import main.java.Controllers.EstadoDeMovimiento;
+import main.java.SEM.Aplication.App;
 
 public class EstadoCaminando implements EstadoDeMovimiento {
 
 	@Override
-	public void llegoMensajeDriving(App app) {
+	public void driving(App app) {
 		app.setEstado(new EstadoConduciendo());
 		app.getModo().conductorCambioDeCaminarAConducir(app);
 	}
 
 	@Override
-	public void llegoMensajeWalking(App app) {
+	public void walking(App app) {
 		// Si llega este mensaje cuando esta caminando no pasa nada
 		
 	}
-	
-	
 
 }

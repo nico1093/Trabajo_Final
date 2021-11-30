@@ -1,7 +1,7 @@
-package SEM;
+package main.java.SEM;
 
-import SEM.Entidades.Inspector;
-import SEM.Estacionamiento.ZonaDeEstacionamiento;
+import main.java.SEM.Entidades.Inspector;
+import main.java.SEM.Estacionamiento.ZonaDeEstacionamiento;
 
 import java.util.Date;
 

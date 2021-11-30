@@ -1,6 +1,6 @@
-package SEM.Compras;
+package main.java.SEM.Compras;
 
-import SEM.Entidades.Comercio;
+import main.java.SEM.Entidades.Comercio;
 
 public class CompraPorHoraPuntual extends Compra {
 	private int HorasCompradas;

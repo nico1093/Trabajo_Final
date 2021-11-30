@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import main.java.SEM.SEM;
+
 public class CompraTestCase {
 	
 	private CompraPorHoraPuntual compraPorHora;

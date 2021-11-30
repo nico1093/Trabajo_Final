@@ -1,7 +1,7 @@
-package SEM.Entidades;
+package main.java.SEM.Entidades;
 
-import SEM.Estacionamiento.ZonaDeEstacionamiento;
-import SEM.SEM;
+import main.java.SEM.Estacionamiento.ZonaDeEstacionamiento;
+import main.java.SEM.SEM;
 
 public class Comercio {
     private String id;

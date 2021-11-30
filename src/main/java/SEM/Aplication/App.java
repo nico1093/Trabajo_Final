@@ -1,13 +1,9 @@
-package SEM.Aplication;
+package main.java.SEM.Aplication;
 
-import Controllers.EstadoDeMovimiento;
-import Controllers.ModoDeApp;
-import Controllers.MovementSensor;
-import EstadosModos.Automatico;
-import EstadosModos.EstadoCaminando;
-import EstadosModos.Manual;
-import SEM.Estacionamiento.ZonaDeEstacionamiento;
-import SEM.SEM;
+import main.java.Controllers.*;
+import main.java.EstadosModos.*;
+import main.java.SEM.SEM;
+import main.java.SEM.Estacionamiento.*;
 
 import java.util.Date;
 
@@ -21,10 +17,11 @@ public class App implements MovementSensor {
 	private ZonaDeEstacionamiento ubicacionGPS;
 	private SEM sem = SEM.getInstance();
 	private Date horaDeinicioDeEstacionamiento ;
+	private IPantalla pantalla;
 	
 	
 
-	public App(Integer numero, String patente) {
+	public App(Integer numero, String patente,IPantalla pantalla) {
 		super();
 		this.numero = numero;
 		this.seInicioEstacionamiento = false;
@@ -37,13 +34,13 @@ public class App implements MovementSensor {
 
 	@Override
 	public void driving() {
-		this.getEstado().llegoMensajeDriving(this);
+		this.getEstado().driving(this);
 		
 	}
-
+	
 	@Override
 	public void walking() {
-		this.getEstado().llegoMensajeWalking(this);
+		this.getEstado().walking(this);
 		
 	}
 	
@@ -165,6 +162,16 @@ public class App implements MovementSensor {
 	
 	private void setHoraDeInicioDeEstacionamiento(Date date) {
 		this.horaDeinicioDeEstacionamiento = date;
+	}
+
+	public EstadoDeMovimiento getEstadoDeMovimiento() {
+		// TODO Auto-generated method stub
+		return this.estado;
+	}
+
+	public IPantalla getPantalla() {
+		// TODO Auto-generated method stub
+		return this.pantalla;
 	}
 
 	

@@ -1,4 +1,4 @@
-package pruebas;
+package main.java.pruebas;
 
 
 import java.io.ByteArrayOutputStream;

@@ -1,6 +1,6 @@
-package Controllers;
+package main.java.Controllers;
 
-import SEM.Aplication.App;
+import main.java.SEM.Aplication.App;
 
 public interface ModoDeApp {
 

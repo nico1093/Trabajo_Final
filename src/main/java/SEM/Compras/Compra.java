@@ -1,5 +1,5 @@
-package SEM.Compras;
-import SEM.Entidades.Comercio;
+package main.java.SEM.Compras;
+import main.java.SEM.Entidades.Comercio;
 
 import java.util.Date;
 

@@ -1,6 +1,6 @@
-package SEM.Estacionamiento;
+package main.java.SEM.Estacionamiento;
 
-import SEM.SEM;
+import main.java.SEM.SEM;
 
 import java.util.Date;
 import java.util.Timer;

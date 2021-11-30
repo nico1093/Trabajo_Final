@@ -1,6 +1,6 @@
-package Controllers;
+package main.java.Controllers;
 
-import SEM.Estacionamiento.Estacionamiento;
+import main.java.SEM.Estacionamiento.Estacionamiento;
 
 import java.util.TimerTask;
 

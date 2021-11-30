@@ -1,6 +1,6 @@
-package SEM.Estacionamiento;
+package main.java.SEM.Estacionamiento;
 
-import Controllers.TareaDeEstacionamientos;
+import main.java.Controllers.TareaDeEstacionamientos;
 
 import java.util.Date;
 

@@ -1,7 +1,7 @@
-package EstadosModos;
+package main.java.EstadosModos;
 
-import Controllers.ModoDeApp;
-import SEM.Aplication.App;
+import main.java.Controllers.ModoDeApp;
+import main.java.SEM.Aplication.App;
 
 public class Automatico implements ModoDeApp {
 

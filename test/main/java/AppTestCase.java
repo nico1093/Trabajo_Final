@@ -1,15 +1,30 @@
 package main.java;
 
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 //import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mockito;
+
+import main.java.EstadosModos.Automatico;
+import main.java.EstadosModos.EstadoCaminando;
+import main.java.EstadosModos.EstadoConduciendo;
+import main.java.EstadosModos.Manual;
+import main.java.SEM.SEM;
+import main.java.SEM.Aplication.App;
+import main.java.SEM.Entidades.Comercio;
+import main.java.SEM.Entidades.Inspector;
+import main.java.SEM.Estacionamiento.ZonaDeEstacionamiento;
+import sem.app.EstadoDeMovimiento;
 
 	
 public class AppTestCase {
@@ -28,22 +43,62 @@ public class AppTestCase {
 		sem = SEM.getInstance();
 		sem.reset();
 		app = new App(1145648612, "AB 123 CD");
-		inspector = new Inspector();
+		inspector =  mock(Inspector.class);
 		zona = new ZonaDeEstacionamiento(SEM.getInstance(), inspector, new ArrayList<Comercio>());
 		System.setOut(new PrintStream(outContent));
 		comercio = new Comercio("Kiosco", zona);
 		zona.getComercios().add(comercio);
 		
 	}
-
+	
+	
 	@Test
-	public void testCuandoUnaAppSeInicia() {
-		assertEquals(app.getNumero(), 1145648612);
-		assertEquals(app.getPatente(), "AB 123 CD");
-		assertFalse(app.isSeInicioEstacionamiento());
-		assertTrue(app.getModo() instanceof Manual);
-		assertTrue(app.getEstado() instanceof EstadoCaminando);
+	public void testAppTieneUnNumeroAsociado() {
+		assertEquals(app.getNumero(), 1145325967);
 	}
+	
+	@Test 
+	public void testAppTieneUnaPatenteAsociada() {
+		assertEquals("ABC123", app.getPatente());
+	}
+	
+	@Test
+	public void testAppTieneUnEstadoDeMovimiento() {
+		assert(app.getEstadoDeMovimiento() instanceof main.java.Controllers.EstadoDeMovimiento);
+	}
+	
+	@Test
+	public void alIniciarseLaAppSuEstadoEsCaminando() {
+		assert(app.getEstadoDeMovimiento().estaCaminando());
+	}
+	
+	@Test
+	public void alLlegarElMensajeDrivingLaAppCambiaDeEstado() {
+		app.driving();
+		assert(app.getEstadoDeMovimiento().estaConduciendo());
+	}
+	
+	@Test
+	public void alLlegarElMensajeWalkingCaminandoLaAppNoCambiaDeEstado() {
+		app.walking();
+		assert(app.getEstadoDeMovimiento().estaCaminando());
+	}
+	
+	@Test
+	public void alLlegarElMensajeWalkingConduciendoLaAppCambiaDeEstado() {
+		app.driving();
+		app.walking();
+		assert(app.getEstadoDeMovimiento().estaCaminando());
+	}
+	
+	@Test
+	public void alLlegarElMensajeDrivingConduciendoLaAppNoCambiaDeEstado() {
+		app.driving();
+		app.driving();
+		assert(app.getEstadoDeMovimiento().estaConduciendo());
+	}
+	
+	
 	
 	@Test
 	public void cambioDeModoEnAppTest() {
@@ -86,17 +141,6 @@ public class AppTestCase {
 	}
 	
 	
-	@Test
-	public void laAppSeEncuentraEnUnaZonaDeEstacionamiento() {
-		app.setUbicacionGPS(zona);
-		assertTrue(app.seEncuentraEnUnaZonaEstacionamiento());
-	}
-	
-	@Test
-	public void laAppNoSeEncuentraEnUnaZonaDeEstacionamiento() {
-		assertFalse(app.seEncuentraEnUnaZonaEstacionamiento());
-	}
-
 	
 	@Test
 	public void alarmaDeInicioDeEstacionamiento() {

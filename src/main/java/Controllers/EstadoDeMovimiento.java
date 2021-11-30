@@ -1,11 +1,11 @@
-package Controllers;
+package main.java.Controllers;
 
-import SEM.Aplication.App;
+import main.java.SEM.Aplication.App;
 
 public interface EstadoDeMovimiento {
 	
-	public void llegoMensajeDriving(App app);
+	public void driving(App app);
 	
-	public void llegoMensajeWalking(App app);
+	public void walking(App app);
 
 }

@@ -1,7 +1,7 @@
-package SEM.Estacionamiento;
+package main.java.SEM.Estacionamiento;
 
-import Controllers.TareaDeEstacionamientos;
-import SEM.Compras.CompraPorHoraPuntual;
+import main.java.Controllers.TareaDeEstacionamientos;
+import main.java.SEM.Compras.CompraPorHoraPuntual;
 
 import java.util.Date;
 import java.util.Timer;

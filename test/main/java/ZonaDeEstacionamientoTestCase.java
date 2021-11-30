@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 
+import main.java.SEM.SEM;
+
 public class ZonaDeEstacionamientoTestCase {
 	
 	private App app;

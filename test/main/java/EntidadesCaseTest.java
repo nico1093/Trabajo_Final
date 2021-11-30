@@ -1,6 +1,5 @@
 package main.java;
 
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,7 +11,10 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class SemTestCase {
+import main.java.SEM.SEM;
+
+public class EntidadesCaseTest {
+	
 	private ZonaDeEstacionamiento zona; 
 	private Inspector inspector;
 	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -36,38 +38,23 @@ public class SemTestCase {
 		
 	}
 	
-	@Test
-	public void seInicioUnEstacionamientoVirutal(){
-		app.setUbicacionGPS(zona);
-		comercio.recargarAplicativo(1153276406, 200);
-		app.inicarEstacionamiento();
-		Estacionamiento estacionamietno = zona.estacionamientoDe(app.getPatente());
-		assertTrue(sem.getEstacionamientos().containsKey(app.getPatente()));
-		assertEquals(estacionamietno.getPatente(), app.getPatente() );
-	}
 	
 	@Test
-	public void seFinalizoUnEstacionamientoVirtual() {
-		app.setUbicacionGPS(zona);
-		comercio.recargarAplicativo(1153276406, 200);
-		app.inicarEstacionamiento();
-		app.finalizarEstacionamiento();
-		assertFalse( zona.estacionamientoDe(app.getPatente()).esVigente());
-	}
-	
-	@Test
-	public void agregarEstacionamientoPorCompra() {
-		assertTrue( sem.getCompras().isEmpty());
+	public void seInicioUnEstacionamiento() {
 		comercio.generarEstacionamiento("ABC123", 2);
-		assertFalse( sem.getCompras().isEmpty() );
-		assertFalse( zona.getEstacionados().isEmpty() );
+		assertEquals(entidad.getContadorDeEstacionamientos(), 1);
 	}
 	
+	
+	
 	@Test
-	public void agregarCompraPorRecarga() {
-		assertTrue( sem.getCompras().isEmpty());
-		comercio.recargarAplicativo(1564068646, 200);
-		assertFalse( sem.getCompras().isEmpty());
+	public void seFinalizoUnEstacionamiento(){
+		app.setUbicacionGPS(zona);
+		comercio.recargarAplicativo(1153276406, 200);
+		app.inicarEstacionamiento();
+		assertEquals( entidad.getContadorDeEstacionamientos(), 1 );
+		app.finalizarEstacionamiento();
+		assertEquals(entidad.getContadorDeEstacionamientos(), 0);
 	}
 	
 	

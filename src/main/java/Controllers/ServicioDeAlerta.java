@@ -1,7 +1,7 @@
-package Controllers;
+package main.java.Controllers;
 
-import SEM.Compras.Compra;
-import SEM.Estacionamiento.Estacionamiento;
+import main.java.SEM.Compras.Compra;
+import main.java.SEM.Estacionamiento.Estacionamiento;
 
 public interface ServicioDeAlerta {
 	

@@ -1,7 +1,7 @@
-package SEM.Alerts;
+package main.java.SEM.Alerts;
 
-import Controllers.AlertasGeneradas;
-import Controllers.EstadoDeMovimiento;
+import main.java.Controllers.AlertasGeneradas;
+import main.java.Controllers.EstadoDeMovimiento;
 
 
 public class SystemAlerts implements AlertasGeneradas {
