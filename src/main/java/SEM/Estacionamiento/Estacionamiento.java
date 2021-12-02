@@ -31,10 +31,6 @@ public abstract class Estacionamiento {
     
 
 
-    public void setPatente(String patente) {
-        this.patente = patente;
-    }
-
     public String getPatente() {
         return patente;
     }
@@ -53,7 +49,7 @@ public abstract class Estacionamiento {
 
     public void anularValidez(){
         this.validezEstacionamiento = false;
-        this.getSem().notificarFinalizacionDeEstacionamiento(this);;
+        this.getSem().notificarFinalizacionDeEstacionamiento(this);
         timer.cancel();
     }
     

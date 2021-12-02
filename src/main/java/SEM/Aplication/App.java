@@ -14,6 +14,7 @@ public class App implements MovementSensor {
 	private EstadoDeMovimiento estado; /*State*/
 	private ModoDeApp modo; /* Strategy */
 	private boolean seInicioEstacionamiento;
+	private boolean seEncuentraEnZona;
 	private ZonaDeEstacionamiento ubicacionGPS;
 	private SEM sem = SEM.getInstance();
 	private Date horaDeinicioDeEstacionamiento ;
@@ -21,26 +22,32 @@ public class App implements MovementSensor {
 	
 	
 
-	public App(Integer numero, String patente,IPantalla pantalla) {
+	public App(Integer numero, String patente, IPantalla pantalla) {
 		super();
 		this.numero = numero;
 		this.seInicioEstacionamiento = false;
 		this.modo = new Manual();
 		this.estado = new EstadoCaminando();
 		this.patente = patente;
+		this.seEncuentraEnZona = false;
+		this.pantalla = pantalla;
 		/* Se asume que el estado del conductor al iniciar la app es camninado 
-		   y que la app se inicia en modo automatico*/
+		   y que la app se inicia en modo manual*/
+	}
+
+	public IPantalla getPantalla() {
+		return pantalla;
 	}
 
 	@Override
 	public void driving() {
-		this.getEstado().driving(this);
+		this.getEstadoDeMovimiento().driving(this);
 		
 	}
 	
 	@Override
 	public void walking() {
-		this.getEstado().walking(this);
+		this.getEstadoDeMovimiento().walking(this);
 		
 	}
 	
@@ -54,11 +61,11 @@ public class App implements MovementSensor {
 	
 	
 	public void mostrarAlertaDeIncioDeEstacionamiento() {
-		System.out.print("No se inicio el estacionamiento");
+		this.getPantalla().mostrar("No se inicio un estacionamiento");
 	}
 	
 	public void mostrarAlertaDeFinalizacionDeEstacionamiento() {
-		System.out.print("No se finalizo el estacionamiento");
+		this.getPantalla().mostrar("No se finalizo el estacionamiento");
 	}
 	
 	public double saldoDeUsuario() {
@@ -67,19 +74,23 @@ public class App implements MovementSensor {
 	
 	
 	public void inicarEstacionamiento() {
-		if(sem.tieneSaldoSuficiente(numero)) {
+		if(this.seInicioEstacionamiento) {
+			// no puedo Iniciar Dos Estacionamientos
+		}
+		else if(sem.tieneSaldoSuficiente(numero) && this.seEncuentraEnLaZonaEstacionamiento()) {
 			this.setSeInicioEstacionamiento(true);
 			this.registrarHora();
 			sem.iniciarEstacionamientoVirtual(this.getPatente(), this.getUbicacionGPS(), this.getNumero());
+			this.getPantalla().mostrar("Hora de inicializacion: " + this.getHoraInicioDeEstacionamiento().getHours() + ", Hora de finalizacion: " + this.horaMaximaDeEstacionamiento().getHours() );
 		}
 		else if(!sem.tieneSaldoSuficiente(numero)) {
-			System.out.print("saldo insuficiente. SEM.Estacionamiento no permitido");
+			this.getPantalla().mostrar("saldo insuficiente. SEM.Estacionamiento no permitido");
 		}
 	  }
 
-	public ZonaDeEstacionamiento seEncuentraEnLaZonaEstacionamiento() {
+	public boolean seEncuentraEnLaZonaEstacionamiento() {
 		//return this.getUbicacionGPS().seEncuentraEnZonaDeEstacionamiento();
-		return sem.getEstacionamientos().get(this.patente);
+		return this.seEncuentraEnZona;
 	}
 
 	private Date horaMaximaDeEstacionamiento() {
@@ -98,11 +109,14 @@ public class App implements MovementSensor {
 		if(this.isSeInicioEstacionamiento()) {
 			this.setSeInicioEstacionamiento(false);
 			sem.finalizarEstacionamientoVirtual(patente);
-			System.out.println(this.getHoraInicioDeEstacionamiento());
+			this.getPantalla().mostrar("Hora de iniciacion: " + this.getHoraInicioDeEstacionamiento().getHours() + ", Hora de finalizacion: " + this.horaActual().getHours() + 
+					", Horas totales de estacionamiento: " +  (this.horaActual().getHours() - this.getHoraInicioDeEstacionamiento().getHours() ) +
+					", Costo de estacionamiento: " + this.costeTotalDeEstacionamiento());
+			/*System.out.println(this.getHoraInicioDeEstacionamiento());
 			System.out.println(this.horaActual());
 			System.out.println(this.horaActual().getHours() - this.getHoraInicioDeEstacionamiento().getHours());
 			System.out.println(this.costeTotalDeEstacionamiento());
-			
+			*/
 		}		
 	}
 	
@@ -121,10 +135,6 @@ public class App implements MovementSensor {
 	
 	public String getPatente() {
 		return patente;
-	}
-	
-	public EstadoDeMovimiento getEstado() {
-		return this.estado;
 	}
 	
 	public ModoDeApp getModo() {
@@ -152,8 +162,13 @@ public class App implements MovementSensor {
 	}
 	
 	/* Este metodo es solo para testear en realidad la aplicacion le pedira a su gps la ubicacion*/
-	public void setUbicacionGPS(ZonaDeEstacionamiento ubicacionGPS) {
+	public void entroAZonaDeEstacionamiento(ZonaDeEstacionamiento ubicacionGPS) {
+		this.seEncuentraEnZona = true;
 		this.ubicacionGPS = ubicacionGPS;
+	}
+	
+	public void salioDeZonaDeEstacionamiento() {
+		this.seEncuentraEnZona = false;
 	}
 	
 	private Date getHoraInicioDeEstacionamiento() {
@@ -169,10 +184,41 @@ public class App implements MovementSensor {
 		return this.estado;
 	}
 
-	public IPantalla getPantalla() {
-		// TODO Auto-generated method stub
-		return this.pantalla;
+	public void cambioDeConducirACaminar() {
+		this.setEstado(new EstadoCaminando());
+		this.getModo().conductorCambioDeConducirACaminar(this);
 	}
+
+	public void cambioDeCaminarAConducir() {
+		this.setEstado(new EstadoConduciendo());
+		this.getModo().conductorCambioDeCaminarAConducir(this);
+	}
+
+	public void posibleInicioDeEstacionamiento() {
+			this.inicarEstacionamiento();
+		
+	}
+
+	public void posibleFinalizacionDeEstacionamiento() {
+		if(this.isSeInicioEstacionamiento()) {
+			this.finalizarEstacionamiento();
+		}
+	}
+
+	public void posibleAlertaDeFinalizacionDeEstacionamiento() {
+		if(this.isSeInicioEstacionamiento()) {
+			this.mostrarAlertaDeFinalizacionDeEstacionamiento();
+		}
+	}
+
+	public void posibleAlertaDeInicioDeEstacionamiento() {
+		if(!this.isSeInicioEstacionamiento() && this.seEncuentraEnLaZonaEstacionamiento() ) {
+			this.mostrarAlertaDeIncioDeEstacionamiento();
+		}
+		
+	}
+	
+	
 
 	
 }

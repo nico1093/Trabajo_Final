@@ -8,18 +8,27 @@ public class Automatico implements ModoDeApp {
 
 	@Override
 	public void conductorCambioDeCaminarAConducir(App app) {
-		if(app.isSeInicioEstacionamiento()) {
+		app.posibleFinalizacionDeEstacionamiento();
+		/*
+		 * if(app.isSeInicioEstacionamiento()) {
 			app.finalizarEstacionamiento();
 		}
+		 */
 		
 	}
 
 	@Override
 	public void conductorCambioDeConducirACaminar(App app) {
-		if(!app.isSeInicioEstacionamiento()) {
+		app.posibleInicioDeEstacionamiento();
+		/*
+		 * if(!app.isSeInicioEstacionamiento() && app.seEncuentraEnLaZonaEstacionamiento()) {
 			app.inicarEstacionamiento();
-		}
+			}
+		 */
+		
 	}
-
+	/*
+	 * Pasar la condicion al iniciarEstacionamiento 
+	 */
 
 }

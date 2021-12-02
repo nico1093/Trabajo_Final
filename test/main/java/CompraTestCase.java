@@ -1,50 +1,78 @@
 package main.java;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.Date;
 import java.util.ArrayList;
+import java.util.Date;
 
+import main.java.SEM.Compras.CompraPorHoraPuntual;
+import main.java.SEM.Compras.CompraPorRecarga;
+import main.java.SEM.Entidades.Comercio;
+import main.java.SEM.Entidades.Inspector;
+import main.java.SEM.Estacionamiento.ZonaDeEstacionamiento;
+import main.java.SEM.SEM;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import main.java.SEM.SEM;
-
 public class CompraTestCase {
-	
+
 	private CompraPorHoraPuntual compraPorHora;
-	private ZonaDeEstacionamiento zona; 
-	private Inspector inspector; 
+	private ZonaDeEstacionamiento zona;
+	private Inspector inspector;
 	private Comercio comercio;
 	private CompraPorRecarga compraPorRecarga;
+	private SEM sem;
 	
 	
 	@BeforeEach
 	public void setUP() throws Exception {
-		inspector = new Inspector();
+		sem = SEM.getInstance();
+		sem.reset();
+		inspector = new Inspector(zona);
 		zona = new ZonaDeEstacionamiento(SEM.getInstance(), inspector, new ArrayList<Comercio>());
 		comercio = new Comercio("Kiosco", zona);
 		zona.getComercios().add(comercio);
-		compraPorHora = new CompraPorHoraPuntual(2, 0, comercio);
-		compraPorRecarga = new CompraPorRecarga(0, comercio, 1153276406, 200);
 	}
+
 	@Test
 	public void testCuandoUnaCompraPorRecarga() {
-		assertEquals(compraPorRecarga.getComercio(), comercio);
-		assertEquals(compraPorRecarga.getNroControl(), 0);
-		assertEquals(compraPorRecarga.getMonto(), 200);
-		assertEquals(compraPorRecarga.getNumero() , 1153276406 );
+		compraPorRecarga = new CompraPorRecarga(0, comercio, 1153276406, 200);
+		Assertions.assertEquals(compraPorRecarga.getMonto(), 200);
+
 	}
 
 	@Test
 	public void testCuandoUnaCompraPorHorasFijasSeInicia() {
+		compraPorHora = new CompraPorHoraPuntual(2, 0, comercio);
 		assertEquals(2, compraPorHora.getHorasCompradas());
-		assertEquals(compraPorHora.getNroControl(),0);
-		assertEquals(compraPorHora.getComercio(),comercio);
-		assertEquals(compraPorHora.getFecha(), new Date() );
-		
+	}
+	
+	@Test
+	public void testUnaCompraTieneUnNumeroDeControlAlEntrarEnElSem() {
+		comercio.generarEstacionamiento("ABC 123 ", 2);
+		comercio.recargarAplicativo(1145648612, 50);
+		assertEquals(sem.getCompras().get(0).getNroControl(), 1);
+		assertEquals(sem.getCompras().get(1).getNroControl(), 2);
+	}
+	
+	@Test
+	public void testUnaCompraTieneAsociadaElComercioDondeSeHizo() {
+		comercio.generarEstacionamiento("ABC 123 ", 2);
+		assertEquals(sem.getCompras().get(0).getComercio() , comercio );
+	}
+	
+	@Test
+	public void testUnaCompraTieneAsociadoLaFechaEnQueSeHizo() {
+		comercio.generarEstacionamiento("AAS 142", 3);
+		assertTrue(sem.getCompras().get(0).getFecha() instanceof Date);
+	}
+	
+	@Test
+	public void testUnaCompraPorRecargaTieneUnNumeroAsociado() {
+		comercio.recargarAplicativo(1145648612, 50);
+		int numeroAsociado = ((CompraPorRecarga) sem.getCompras().get(0)).getNumero();
+		assertEquals(numeroAsociado, 1145648612 );
 	}
 	
 }

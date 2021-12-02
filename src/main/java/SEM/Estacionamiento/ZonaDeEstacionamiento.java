@@ -6,6 +6,7 @@ import main.java.SEM.SEM;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ZonaDeEstacionamiento {
     private SEM sem = SEM.getInstance();
@@ -39,26 +40,10 @@ public class ZonaDeEstacionamiento {
 		return sem;
 	}
 
-
-
-
-	public void setSem(SEM sem) {
-		this.sem = sem;
-	}
-
-
-
-
 	public Inspector getEncargado() {
 		return encargado;
 	}
 
-
-
-
-	public void setEncargado(Inspector encargado) {
-		this.encargado = encargado;
-	}
 
 
 
@@ -69,10 +54,6 @@ public class ZonaDeEstacionamiento {
 
 
 
-
-	public void setComercios(List<Comercio> comercios) {
-		this.comercios = comercios;
-	}
 
 
 
@@ -89,27 +70,37 @@ public class ZonaDeEstacionamiento {
 
 
 	public boolean estacionamientoEsVigente(String patente) {
-		Estacionamiento resultado = null;
+		/*Estacionamiento resultado = null;
 		for (Estacionamiento estacionamiento : this.getEstacionados()) {
 	        if (estacionamiento.getPatente().equals(patente)) {
 	            resultado = estacionamiento;
 	        }
 		}
 		return resultado.esVigente();
+		Lo cambio para que pueda haber dos estacionamientos del mismo coche vigentes
+		*/
+		return this.getEstacionados().stream().anyMatch(e -> e.getPatente().equals(patente) && e.esVigente());
 	}
 	
 
 	public Estacionamiento estacionamientoDe(String patente) {
+		//Estacionamiento estacionamiento = this.getEstacionados().stream().filter(/* your criteria */).findFirst().orElse(null);
+		Estacionamiento estacionamiento = this.getEstacionados().stream().filter(s -> s.getPatente().equals(patente)).reduce((first, second) -> second).get();
+		return estacionamiento;
+		
+		/*
 		for (Estacionamiento estacionamiento : this.getEstacionados()) {
 	        if (estacionamiento.getPatente().equals(patente)) {
 	            return estacionamiento;
 	        }
 		}
+		
 		return null;
+		*/ 
+		// tirar una exception ?
+		 
 	}
 
 
-	public boolean seEncuentraEnZonaDeEstacionamiento() {
-		return true;
-	}
+	
 }

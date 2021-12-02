@@ -27,9 +27,6 @@ public class Inspector {
 		return this.zonaEncargada;
 	}
 
-	public void setZonaEncargada(ZonaDeEstacionamiento zonaEncargada) {
-		this.zonaEncargada = zonaEncargada;
-	}
 
 	public SEM getSem() {
 		return this.sem;

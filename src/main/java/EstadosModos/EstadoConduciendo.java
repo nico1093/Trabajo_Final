@@ -8,13 +8,11 @@ public class EstadoConduciendo implements EstadoDeMovimiento {
 	@Override
 	public void driving(App app) {
 		// No hace nada
-
 	}
 
 	@Override
 	public void walking(App app) {
-		app.setEstado(new EstadoCaminando());
-		app.getModo().conductorCambioDeConducirACaminar(app);
+		app.cambioDeConducirACaminar();
 	}
 
 }

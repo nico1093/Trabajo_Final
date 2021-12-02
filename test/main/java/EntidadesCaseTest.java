@@ -1,61 +1,73 @@
 package main.java;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import main.java.SEM.Aplication.App;
+import main.java.SEM.Aplication.IPantalla;
+import main.java.SEM.Compras.Compra;
+import main.java.SEM.Entidades.Comercio;
+import main.java.SEM.Entidades.Inspector;
+import main.java.SEM.Estacionamiento.Estacionamiento;
+import main.java.SEM.Estacionamiento.ZonaDeEstacionamiento;
+import main.java.Controllers.ServicioDeAlerta;
+import main.java.SEM.SEM;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import main.java.SEM.SEM;
+import org.mockito.Mockito;
 
 public class EntidadesCaseTest {
 	
-	private ZonaDeEstacionamiento zona; 
+	private ZonaDeEstacionamiento zona;
 	private Inspector inspector;
-	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	private SEM sem;
 	private Comercio comercio;
-	private EntidadObservadora entidad;
 	private App app;
+	private IPantalla pantalla;
+	private ServicioDeAlerta entidad;
 	
 	@BeforeEach
 	public void setUP() throws Exception {
 		sem = SEM.getInstance();
 		sem.reset();	
-		inspector = new Inspector();
+		entidad = mock(ServicioDeAlerta.class);
+		inspector = new Inspector(zona);
 		zona = new ZonaDeEstacionamiento(SEM.getInstance(), inspector, new ArrayList<Comercio>());
-		System.setOut(new PrintStream(outContent));
 		comercio = new Comercio("Kiosco", zona);
 		zona.getComercios().add(comercio);
-		entidad = new EntidadObservadora();
+		pantalla = mock(IPantalla.class);
+		app = new App(1153276406, "ABC123",pantalla);
+		sem.setPrecioPorHora((double) 40);
 		sem.suscribirEntidad(entidad);
-		app = new App(1153276406, "ABC123");
-		
 	}
 	
 	
 	@Test
-	public void seInicioUnEstacionamiento() {
+	public void seInicioUnEstacionamientoPorCompra() {
 		comercio.generarEstacionamiento("ABC123", 2);
-		assertEquals(entidad.getContadorDeEstacionamientos(), 1);
+		Mockito.verify(entidad).seInicioEstacionamiento(isA(Estacionamiento.class));
 	}
-	
-	
-	
+
+	@Test
+	public void seInicioUnEstacionamientoVirtual() {
+		comercio.recargarAplicativo(1153276406, 200);
+		Mockito.verify(entidad).seRealizoUnaRecarga(isA(Compra.class));
+	}
+
+	/*
 	@Test
 	public void seFinalizoUnEstacionamiento(){
-		app.setUbicacionGPS(zona);
+		app.entroAZonaDeEstacionamiento(zona);
 		comercio.recargarAplicativo(1153276406, 200);
 		app.inicarEstacionamiento();
-		assertEquals( entidad.getContadorDeEstacionamientos(), 1 );
 		app.finalizarEstacionamiento();
-		assertEquals(entidad.getContadorDeEstacionamientos(), 0);
+		Mockito.verify(entidad).seFinalizoEstacionamiento(isA(Estacionamiento.class));
 	}
-	
-	
+	*/
 }
