@@ -62,6 +62,5 @@ public abstract class Estacionamiento {
 	}
 
 	public abstract void revisarValidez();
-	
 
 }

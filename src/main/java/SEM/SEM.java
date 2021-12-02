@@ -19,7 +19,7 @@ import java.util.List;
 public class SEM {
     private static SEM instancia;
     private List<Infraccion> infracciones = new ArrayList<Infraccion>();
-    private final double precioPorHora =  40;
+    private Double precioPorHora ;
     /**
       El string(patente) es la forma univoca de identificar un vehiculo estacionado en esa zona.
       Y el mismo vehiculo no se podra visualizar en dos zonas de estacionamiento simultaneamente.
@@ -32,9 +32,11 @@ public class SEM {
     private HashMap<Integer, Double> registroSaldo = new HashMap<Integer, Double>();
     private List<Compra> compras = new ArrayList<Compra>();
     private List<ServicioDeAlerta> listeners = new ArrayList <ServicioDeAlerta>();
+    //pasar al constructor
 
-
-    private SEM(){}
+    private SEM(){
+    	this.precioPorHora =  40.0;
+    }
 
     public static SEM getInstance(){
         if(instancia == null){
@@ -51,9 +53,7 @@ public class SEM {
     }
     
     public void notificarInicioDeEstacionamiento(Estacionamiento estacionamiento) {
-    	for (ServicioDeAlerta listener : this.listeners) {
-    		listener.seInicioEstacionamiento(estacionamiento);
-    	}
+    	this.getListeners().stream().forEach(l -> l.seInicioEstacionamiento(estacionamiento));
     	
     }
     
@@ -72,12 +72,16 @@ public class SEM {
     }
     
     public void notificarFinalizacionDeEstacionamiento(Estacionamiento estacionamiento) {
-    	for (ServicioDeAlerta listener : this.listeners) {
-    		listener.seFinalizoEstacionamiento(estacionamiento);
-    	}
+    	this.getListeners().stream().forEach(l -> l.seFinalizoEstacionamiento(estacionamiento));
+    	
     }
 
-    public boolean esValidoElEstacionamiento(String patente){
+    public List<ServicioDeAlerta> getListeners() {
+		// TODO Auto-generated method stub
+		return this.listeners; 
+	}
+
+	public boolean esValidoElEstacionamiento(String patente){
         ZonaDeEstacionamiento zona = this.getEstacionamientos().get(patente);
     	return zona.estacionamientoEsVigente(patente) ;
     }
@@ -93,11 +97,10 @@ public class SEM {
     public void cargarSaldo(int numero, double saldo, Comercio comercio){
         if(this.registroSaldo.containsKey(numero)){
             this.registroSaldo.put(numero, registroSaldo.get(numero) + saldo);
-            this.agregarCompraDeRecarga(numero,saldo,comercio);
         }else{
             this.registroSaldo.put(numero, saldo);
-            this.agregarCompraDeRecarga(numero,saldo,comercio);
         }
+        	this.agregarCompraDeRecarga(numero,saldo,comercio);
     }
 
     private void agregarCompraDeRecarga(int numero, double saldo, Comercio comercio) {
@@ -107,14 +110,11 @@ public class SEM {
 	}
 
     private void notifcarRecarga(Compra compra) {
-    	for (ServicioDeAlerta listener : this.listeners) {
-			listener.seRealizoUnaRecarga(compra);
-		}
-		
+    	this.getListeners().stream().forEach(l -> l.seRealizoUnaRecarga(compra));
 	}
 
 	public boolean tieneSaldoSuficiente(Integer numero) {
-    	return this.getRegistroSaldo().containsKey(numero) && this.saldoDeUsuario(numero) > 40;
+    	return this.getRegistroSaldo().containsKey(numero) && this.saldoDeUsuario(numero) >= this.getPrecioPorHora();
     }
     
 	public void finalizarEstacionamientoVirtual(String patente){
@@ -133,6 +133,14 @@ public class SEM {
 		return this.getRegistroSaldo().containsKey(numero) ? this.getRegistroSaldo().get(numero) : 0;
     }
     
+    public void suscribirEntidad(ServicioDeAlerta servicio) {
+    	this.listeners.add(servicio);
+    }
+    
+    public static SEM getInstancia() {
+    	return instancia;
+    }
+    
     public List<Infraccion> getInfracciones() {
     	return infracciones;
     }
@@ -149,27 +157,34 @@ public class SEM {
 		return precioPorHora;
 	}
 
+	public void setPrecioPorHora(Double precioPorHora) {
+		this.precioPorHora = precioPorHora;
+	}
+	
 	private int proximoNumeroDeCompra() {
+		int numeroDeCompra;
 		if (this.getCompras().isEmpty()) {
-			return 1;
+			 numeroDeCompra = 1;
 		}
 		else {
-			return this.getCompras().get(this.getCompras().size() -1 ).getNroControl() + 1;
+			numeroDeCompra = this.getCompras().get(this.getCompras().size() -1 ).getNroControl() + 1;
 			}
+		return numeroDeCompra;
 	}
 	public HashMap<Integer, Double> getRegistroSaldo() {
 		return registroSaldo;
 	}
 
 	public void reset() {
-		this.estacionamientos = new HashMap<String,ZonaDeEstacionamiento>();
+		this.estacionamientos = new HashMap<String, ZonaDeEstacionamiento>();
 		this.infracciones = new ArrayList<Infraccion>();
 		this.registroSaldo = new HashMap<Integer, Double>();
 		this.compras = new  ArrayList<Compra>();
-		this.listeners = new ArrayList <ServicioDeAlerta>(); 
+		this.listeners = new ArrayList <ServicioDeAlerta>();
 		
 		
 	}
+
 
 
 }

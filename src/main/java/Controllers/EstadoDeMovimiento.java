@@ -2,10 +2,9 @@ package Controllers;
 
 import SEM.Aplication.App;
 
-public interface EstadoDeMovimiento {
-	
-	public void llegoMensajeDriving(App app);
-	
-	public void llegoMensajeWalking(App app);
+import java.util.Observer;
 
+public interface EstadoDeMovimiento {
+	public void driving(App app);
+	public void walking(App app);
 }

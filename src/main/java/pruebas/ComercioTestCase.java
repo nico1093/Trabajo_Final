@@ -1,7 +1,6 @@
 package pruebas;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+
 import java.util.ArrayList;
 
 import SEM.Entidades.Comercio;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.Test;
 public class ComercioTestCase {
 	private ZonaDeEstacionamiento zona;
 	private Inspector inspector;
-	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	private SEM sem;
 	private Comercio comercio;
 	
@@ -27,7 +25,6 @@ public class ComercioTestCase {
 		sem.reset();
 		inspector = new Inspector(zona);
 		zona = new ZonaDeEstacionamiento(SEM.getInstance(), inspector, new ArrayList<Comercio>());
-		System.setOut(new PrintStream(outContent));
 		comercio = new Comercio("Kiosco", zona);
 		zona.getComercios().add(comercio);
 		
@@ -49,5 +46,15 @@ public class ComercioTestCase {
 		int cantComprasGeneradas = sem.getCompras().size();
 		comercio.recargarAplicativo(1564068646, 200);
 		Assertions.assertTrue( sem.getCompras().size() > cantComprasGeneradas);
+	}
+	
+	@Test
+	public void testElComercioTieneUnID() {
+		Assertions.assertEquals(comercio.getId(), "Kiosco");
+	}
+	
+	@Test
+	public void testElComercioTieneUnaZona() {
+		Assertions.assertEquals(comercio.getZona(), zona);
 	}
 }
