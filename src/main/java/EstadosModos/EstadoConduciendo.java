@@ -6,12 +6,12 @@ import main.java.SEM.Aplication.App;
 public class EstadoConduciendo implements EstadoDeMovimiento {
 
 	@Override
-	public void driving(App app) {
+	public void alertaDriving(App app) {
 		// No hace nada
 	}
 
 	@Override
-	public void walking(App app) {
+	public void alertaWalking(App app) {
 		app.cambioDeConducirACaminar();
 	}
 

@@ -38,7 +38,6 @@ public class AppTestCase {
 	private App app;
 	private ZonaDeEstacionamiento zona;
 	private Inspector inspector;
-	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	private SEM sem;
 	private Comercio comercio;
 	private ServicioDeAlerta servicio;
@@ -53,8 +52,7 @@ public class AppTestCase {
 		pantalla = mock(IPantalla.class);
 		app = new App(1145648612, "AB 123 CD",pantalla);
 		inspector = mock(Inspector.class);
-		zona = new ZonaDeEstacionamiento(SEM.getInstance(), inspector, new ArrayList<Comercio>());
-		System.setOut(new PrintStream(outContent));
+		zona = new ZonaDeEstacionamiento(SEM.getInstance(),inspector, new ArrayList<Comercio>());
 		comercio = new Comercio("Kiosco", zona);
 		zona.getComercios().add(comercio);
 		servicio =  mock(ServicioDeAlerta.class);
@@ -187,17 +185,8 @@ public class AppTestCase {
 		app.inicarEstacionamiento();
 		Mockito.verify(pantalla).mostrar("Hora de inicializacion: " + new Date().getHours() + ", Hora de finalizacion: " + "20"  );
 	}
+
 	
-/*	@Test
-	public void testAlIniciarseElEstacionamientoSeMuestaElMaximoDeHoras() {
-		comercio.recargarAplicativo(app.getNumero(), 40);
-		app.entroAZonaDeEstacionamiento(zona);
-		app.inicarEstacionamiento();
-		Integer hora = new Date().getHours();
-		Mockito.verify(pantalla).mostrar("Hora de inicializacion: " + hora + ", Hora de finalizacion: " + (hora + 1 ) );
-	}
-	Este test funciona dentro del horario
-	*/
 	
 	@Test
 	public void testalarmaDeInicioDeEstacionamiento() {
@@ -228,7 +217,7 @@ public class AppTestCase {
 	}
 	
 	@Test
-	public void alInciarEstacionamientoSeSacaSaldo() {
+	public void alInciarEstacionamientoSeSacaSaldo() throws InterruptedException {
 		comercio.recargarAplicativo(app.getNumero(), 200);
 		app.entroAZonaDeEstacionamiento(zona);
 		app.inicarEstacionamiento();
@@ -267,110 +256,6 @@ public class AppTestCase {
 		assertFalse(app.isSeInicioEstacionamiento());
 	}
 	
-	
-	
-	/*@Test
-	public void cambioDeModoEnAppTest() {
-		assertTrue(app.getModo() instanceof Manual);
-		app.cambiarModoAutomatico();
-		assertTrue(app.getModo() instanceof Automatico);
-		app.cambiarModoManual();
-		assertTrue(app.getModo() instanceof Manual);
-	}
-	
-	
-	@Test
-	public void cuandoLlegaElMensajeDrivingConduciendoNoCambiaDeEstado() {
-		app.driving();
-		assertTrue(app.getEstadoDeMovimiento() instanceof EstadoConduciendo);
-		app.driving();
-		assertTrue(app.getEstadoDeMovimiento() instanceof EstadoConduciendo);
-	}
-	
-	@Test 
-	public void cuandoLlegaElMensjeWalkingConducuiendoCambiaDeEstado() {
-		app.entroAZonaDeEstacionamiento(zona);
-		app.driving();
-		assertTrue(app.getEstadoDeMovimiento() instanceof EstadoConduciendo);
-		app.walking();
-		assertTrue(app.getEstadoDeMovimiento() instanceof EstadoCaminando);
-	}
-	
-	
-	/*@Test
-	public void laAppSeEncuentraEnUnaZonaDeEstacionamiento() {
-		comercio.recargarAplicativo(1145648612, 200);
-		app.setUbicacionGPS(zona);
-		app.inicarEstacionamiento();
-		Assertions.assertEquals(app.seEncuentraEnLaZonaEstacionamiento(), zona);
-	}
-	*/
-	
-	/*
-	@Test
-	public void laAppNoSeEncuentraEnUnaZonaDeEstacionamiento() {
-		Assertions.assertNull(app.seEncuentraEnLaZonaEstacionamiento());
-	}
-	
 
-	
-	@Test
-	public void alarmaDeInicioDeEstacionamiento() {
-		app.entroAZonaDeEstacionamiento(zona);
-		app.driving();
-		app.walking();
-		assertEquals("No se inicio el estacionamiento", outContent.toString());
-	}
-	
-	
-	
-	@Test
-	public void mensajeDeUsuarioSinCredito() {
-		app.inicarEstacionamiento();
-		assertEquals("saldo insuficiente. SEM.Estacionamiento no permitido", outContent.toString());
-	}
-	
-	
-	@Test 
-	public void obtenerSaldo() {
-		comercio.recargarAplicativo(1145648612, 200);
-		assertEquals (app.saldoDeUsuario(), 200, 0);
-	}
-	
-	
-	@Test
-	public void iniciarEstacionamiento() throws InterruptedException {
-		app.entroAZonaDeEstacionamiento(zona);
-		comercio.recargarAplicativo(1145648612, 200);
-		app.inicarEstacionamiento();
-		assertTrue(app.isSeInicioEstacionamiento());
-	}
-	
-	
-	
-	@Test
-	public void finalizarEstacionamiento() {
-		app.entroAZonaDeEstacionamiento(zona);
-		comercio.recargarAplicativo(1145648612, 200);
-		app.inicarEstacionamiento();
-		app.finalizarEstacionamiento();
-		assertFalse(app.isSeInicioEstacionamiento());
-		assertEquals(app.saldoDeUsuario() ,160,0);
-	}
-	
-
-	
-	@Test
-	public void finalizarEstacionamientoAutomatico() {
-		app.cambiarModoAutomatico();
-		comercio.recargarAplicativo(1145648612, 200);
-		app.entroAZonaDeEstacionamiento(zona);
-		app.driving();
-		app.walking();
-		app.finalizarEstacionamiento();
-		Assertions.assertNull(sem.getEstacionamientos().get(app.getPatente()));
-	}
-
-	*/
 
 }

@@ -14,8 +14,7 @@ public class App implements MovementSensor {
 	private EstadoDeMovimiento estado; /*State*/
 	private ModoDeApp modo; /* Strategy */
 	private boolean seInicioEstacionamiento;
-	private boolean seEncuentraEnZona;
-	private ZonaDeEstacionamiento ubicacionGPS;
+	private Ubicacion ubicacionGPS;
 	private SEM sem = SEM.getInstance();
 	private Date horaDeinicioDeEstacionamiento ;
 	private IPantalla pantalla;
@@ -29,8 +28,8 @@ public class App implements MovementSensor {
 		this.modo = new Manual();
 		this.estado = new EstadoCaminando();
 		this.patente = patente;
-		this.seEncuentraEnZona = false;
 		this.pantalla = pantalla;
+		this.ubicacionGPS = new NullUbicacion();
 		/* Se asume que el estado del conductor al iniciar la app es camninado 
 		   y que la app se inicia en modo manual*/
 	}
@@ -41,13 +40,13 @@ public class App implements MovementSensor {
 
 	@Override
 	public void driving() {
-		this.getEstadoDeMovimiento().driving(this);
+		this.getEstadoDeMovimiento().alertaDriving(this);
 		
 	}
 	
 	@Override
 	public void walking() {
-		this.getEstadoDeMovimiento().walking(this);
+		this.getEstadoDeMovimiento().alertaWalking(this);
 		
 	}
 	
@@ -80,7 +79,7 @@ public class App implements MovementSensor {
 		else if(sem.tieneSaldoSuficiente(numero) && this.seEncuentraEnLaZonaEstacionamiento()) {
 			this.setSeInicioEstacionamiento(true);
 			this.registrarHora();
-			sem.iniciarEstacionamientoVirtual(this.getPatente(), this.getUbicacionGPS(), this.getNumero());
+			sem.iniciarEstacionamientoVirtual(this.getPatente(), this.getUbicacionGPS().getZona(), this.getNumero());
 			this.getPantalla().mostrar("Hora de inicializacion: " + this.getHoraInicioDeEstacionamiento().getHours() + ", Hora de finalizacion: " + this.horaMaximaDeEstacionamiento().getHours() );
 		}
 		else if(!sem.tieneSaldoSuficiente(numero)) {
@@ -90,7 +89,7 @@ public class App implements MovementSensor {
 
 	public boolean seEncuentraEnLaZonaEstacionamiento() {
 		//return this.getUbicacionGPS().seEncuentraEnZonaDeEstacionamiento();
-		return this.seEncuentraEnZona;
+		return this.getUbicacionGPS().seEncuentraEnZonaDeEstacionamiento();
 	}
 
 	private Date horaMaximaDeEstacionamiento() {
@@ -157,18 +156,17 @@ public class App implements MovementSensor {
 		this.modo = modo;
 	}
 
-	private ZonaDeEstacionamiento getUbicacionGPS() {
+	private Ubicacion getUbicacionGPS() {
 		return ubicacionGPS;
 	}
 	
 	/* Este metodo es solo para testear en realidad la aplicacion le pedira a su gps la ubicacion*/
-	public void entroAZonaDeEstacionamiento(ZonaDeEstacionamiento ubicacionGPS) {
-		this.seEncuentraEnZona = true;
-		this.ubicacionGPS = ubicacionGPS;
+	public void entroAZonaDeEstacionamiento(ZonaDeEstacionamiento zona) {
+		this.ubicacionGPS = new UbicacionDentroDeZona(zona);
 	}
 	
 	public void salioDeZonaDeEstacionamiento() {
-		this.seEncuentraEnZona = false;
+		this.ubicacionGPS = new NullUbicacion();
 	}
 	
 	private Date getHoraInicioDeEstacionamiento() {
@@ -192,17 +190,6 @@ public class App implements MovementSensor {
 	public void cambioDeCaminarAConducir() {
 		this.setEstado(new EstadoConduciendo());
 		this.getModo().conductorCambioDeCaminarAConducir(this);
-	}
-
-	public void posibleInicioDeEstacionamiento() {
-			this.inicarEstacionamiento();
-		
-	}
-
-	public void posibleFinalizacionDeEstacionamiento() {
-		if(this.isSeInicioEstacionamiento()) {
-			this.finalizarEstacionamiento();
-		}
 	}
 
 	public void posibleAlertaDeFinalizacionDeEstacionamiento() {

@@ -63,42 +63,34 @@ public class ZonaDeEstacionamiento {
 	}
 
 
-
+	public void asignarInspector(Inspector inspector) {
+		this.encargado = inspector;
+	}
 
 
 
 
 
 	public boolean estacionamientoEsVigente(String patente) {
-		/*Estacionamiento resultado = null;
-		for (Estacionamiento estacionamiento : this.getEstacionados()) {
-	        if (estacionamiento.getPatente().equals(patente)) {
-	            resultado = estacionamiento;
-	        }
-		}
-		return resultado.esVigente();
-		Lo cambio para que pueda haber dos estacionamientos del mismo coche vigentes
-		*/
+		
 		return this.getEstacionados().stream().anyMatch(e -> e.getPatente().equals(patente) && e.esVigente());
 	}
 	
 
 	public Estacionamiento estacionamientoDe(String patente) {
-		//Estacionamiento estacionamiento = this.getEstacionados().stream().filter(/* your criteria */).findFirst().orElse(null);
+		
 		Estacionamiento estacionamiento = this.getEstacionados().stream().filter(s -> s.getPatente().equals(patente)).reduce((first, second) -> second).get();
 		return estacionamiento;
 		
-		/*
-		for (Estacionamiento estacionamiento : this.getEstacionados()) {
-	        if (estacionamiento.getPatente().equals(patente)) {
-	            return estacionamiento;
-	        }
-		}
 		
-		return null;
-		*/ 
-		// tirar una exception ?
-		 
+	}
+
+
+
+
+	public boolean estaDentroDeLaZona() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 

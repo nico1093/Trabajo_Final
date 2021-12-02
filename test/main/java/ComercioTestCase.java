@@ -1,6 +1,7 @@
 package main.java;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -59,5 +60,19 @@ public class ComercioTestCase {
 	@Test
 	public void testElComercioTieneUnaZona() {
 		assertEquals(comercio.getZona(), zona);
+	}
+	
+	@Test
+	public void testNoPuedoRecargarSaldoNegativo() {
+		comercio.recargarAplicativo(1153276390, -10);
+		assertEquals(sem.saldoDeUsuario(1153276390), 0 ,0);
+		assertTrue(sem.getCompras().isEmpty());
+	}
+	
+	@Test
+	public void testNoEstacionarPorHorasNegativas() {
+		comercio.generarEstacionamiento("ABC 123", -10);
+		assertTrue(sem.getCompras().isEmpty());
+		assertTrue(sem.getEstacionamientos().isEmpty());
 	}
 }

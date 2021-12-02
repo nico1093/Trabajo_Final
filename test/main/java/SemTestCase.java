@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 public class SemTestCase {
 	private ZonaDeEstacionamiento zona;
@@ -39,6 +40,7 @@ public class SemTestCase {
 	private App app;
 	private IPantalla pantalla;
 	private ServicioDeAlerta entidad;
+	private ZonaDeEstacionamiento spyZona;
 
 	@BeforeEach
 	public void setUP() throws Exception {
@@ -46,13 +48,20 @@ public class SemTestCase {
 		sem.reset();
 		sem.setPrecioPorHora( (double) 40 );	
 		zona = mock(ZonaDeEstacionamiento.class);
-		inspector = new Inspector(zona);
-		//zona = new ZonaDeEstacionamiento(SEM.getInstance(), inspector, new ArrayList<Comercio>());
-		comercio = new Comercio("Kiosco", zona);
+		zona = new ZonaDeEstacionamiento(SEM.getInstance(), inspector, new ArrayList<Comercio>());
+		spyZona = spy(zona);
+		inspector = new Inspector(spyZona);
+		comercio = new Comercio("Kiosco", spyZona);
 		zona.getComercios().add(comercio);
 		pantalla = mock(IPantalla.class);
 		entidad = mock(ServicioDeAlerta.class);
 		app = new App(1153276406, "ABC123",pantalla);
+	}
+	
+	@Test
+	public void testElSemTieneUnaSolaInstancia() {
+		SEM sem2 = SEM.getInstance();
+		assertEquals(sem, sem2);
 	}
 	
 	@Test
@@ -102,15 +111,15 @@ public class SemTestCase {
 	@Test
 	public void testAgregarUnEstacionamientoPorCompraALaZona() {
 		comercio.generarEstacionamiento("ABC 123", 2);
-		Mockito.verify(zona).agregarEstacionamiento(isA(EstacionamientoPorCompra.class));
+		Mockito.verify(spyZona).agregarEstacionamiento(isA(EstacionamientoPorCompra.class));
 	}
 	
 	@Test
 	public void testAgregarUnEstacionamientoVirtualALaZona() {
-		app.entroAZonaDeEstacionamiento(zona);
+		app.entroAZonaDeEstacionamiento(spyZona);
 		comercio.recargarAplicativo(1153276406, 200);
 		app.inicarEstacionamiento();
-		Mockito.verify(zona).agregarEstacionamiento(isA(EstacionamientoVirtual.class));
+		Mockito.verify(spyZona).agregarEstacionamiento(isA(EstacionamientoVirtual.class));
 	}
 	
 	@Test 
@@ -146,7 +155,7 @@ public class SemTestCase {
 		assertEquals(numeroDeControl, 2);
 	}
 	
-	/*
+	
 	@Test
 	public void testAlFinalizarUnEstacionamientoSeInformaALasEntidades() {
 		sem.suscribirEntidad(entidad);
@@ -157,7 +166,7 @@ public class SemTestCase {
 		app.finalizarEstacionamiento();
 		Mockito.verify(entidad).seFinalizoEstacionamiento(isA(Estacionamiento.class));
 	}
-	*/
+	
 
 	@Test
 	public void testAlCargarSaldoSeAgregaAlRegistro() {
@@ -188,41 +197,5 @@ public class SemTestCase {
 	
 	
 	
-	/*
-	@Test
-	public void seInicioUnEstacionamientoVirutal(){
-		app.entroAZonaDeEstacionamiento(zona);
-		comercio.recargarAplicativo(1153276406, 200);
-		app.inicarEstacionamiento();
-		Estacionamiento estacionamietno = zona.estacionamientoDe(app.getPatente());
-		Assertions.assertTrue(sem.getEstacionamientos().containsKey(app.getPatente()));
-		assertEquals(estacionamietno.getPatente(), app.getPatente() );
-	}
-	
-	@Test
-	public void seFinalizoUnEstacionamientoVirtual() {
-		app.entroAZonaDeEstacionamiento(zona);
-		comercio.recargarAplicativo(1153276406, 200);
-		app.inicarEstacionamiento();
-		app.finalizarEstacionamiento();
-		Assertions.assertFalse( zona.estacionamientoDe(app.getPatente()).esVigente());
-	}
-	
-	@Test
-	public void agregarEstacionamientoPorCompra() {
-		Assertions.assertTrue( sem.getCompras().isEmpty());
-		comercio.generarEstacionamiento("ABC123", 2);
-		Assertions.assertFalse( sem.getCompras().isEmpty() );
-		Assertions.assertFalse( zona.getEstacionados().isEmpty() );
-	}
-	
-	@Test
-	public void agregarCompraPorRecarga() {
-		Assertions.assertTrue( sem.getCompras().isEmpty());
-		comercio.recargarAplicativo(1564068646, 200);
-		Assertions.assertFalse( sem.getCompras().isEmpty());
-	}
-	
-	*/
 	
 }

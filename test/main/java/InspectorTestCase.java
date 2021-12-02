@@ -69,4 +69,6 @@ public class InspectorTestCase {
 		Inspector encargado = new Inspector(zona);
 		assertEquals(encargado.getSem(), sem);
 	}
+	
+
 }

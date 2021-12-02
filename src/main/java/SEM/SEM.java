@@ -10,29 +10,36 @@ import main.java.SEM.Estacionamiento.ZonaDeEstacionamiento;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class SEM {
     private static SEM instancia;
-    private List<Infraccion> infracciones = new ArrayList<Infraccion>();
+    private List<Infraccion> infracciones ;
     private Double precioPorHora ;
     /**
       El string(patente) es la forma univoca de identificar un vehiculo estacionado en esa zona.
       Y el mismo vehiculo no se podra visualizar en dos zonas de estacionamiento simultaneamente.
      */
-    private HashMap<String, ZonaDeEstacionamiento> estacionamientos = new HashMap<String,ZonaDeEstacionamiento>();
+    private HashMap<String, ZonaDeEstacionamiento> estacionamientos ;
     /**
      * El key int es la relacion de un numero telefonico y el value es el saldo que corresponde al
      * numero telefonico.
      * */
-    private HashMap<Integer, Double> registroSaldo = new HashMap<Integer, Double>();
-    private List<Compra> compras = new ArrayList<Compra>();
-    private List<ServicioDeAlerta> listeners = new ArrayList <ServicioDeAlerta>();
-    //pasar al constructor
+    private HashMap<Integer, Double> registroSaldo ;
+    private List<Compra> compras ;
+    private Set<ServicioDeAlerta> listeners ;
 
     private SEM(){
     	this.precioPorHora =  40.0;
+    	this.estacionamientos =  new HashMap<String,ZonaDeEstacionamiento>();
+    	this.registroSaldo =  new HashMap<Integer, Double>();
+    	this.infracciones =  new ArrayList<Infraccion>();
+    	this.compras = new ArrayList<Compra>();
+    	this.listeners = new HashSet<ServicioDeAlerta>();
+    	
     }
 
     public static SEM getInstance(){
@@ -69,18 +76,25 @@ public class SEM {
     }
     
     public void notificarFinalizacionDeEstacionamiento(Estacionamiento estacionamiento) {
-    	this.getListeners().stream().forEach(l -> l.seFinalizoEstacionamiento(estacionamiento));
+    	
+    	this.getListeners().stream().forEach(l -> l.seFinalizoEstacionamiento(estacionamiento)) ;
     	
     }
 
-    public List<ServicioDeAlerta> getListeners() {
-		// TODO Auto-generated method stub
+    public Set<ServicioDeAlerta> getListeners() {
 		return this.listeners; 
 	}
 
 	public boolean esValidoElEstacionamiento(String patente){
-        ZonaDeEstacionamiento zona = this.getEstacionamientos().get(patente);
-    	return zona.estacionamientoEsVigente(patente) ;
+		boolean esVigente;
+		if (this.getEstacionamientos().containsKey(patente)) {
+			ZonaDeEstacionamiento zona = this.getEstacionamientos().get(patente);	
+			esVigente = zona.estacionamientoEsVigente(patente);
+		}
+		else {
+			esVigente = false;
+		}
+    	return esVigente;
     }
 
 
@@ -171,16 +185,17 @@ public class SEM {
 	public HashMap<Integer, Double> getRegistroSaldo() {
 		return registroSaldo;
 	}
+	
 
 	public void reset() {
 		this.estacionamientos = new HashMap<String,ZonaDeEstacionamiento>();
 		this.infracciones = new ArrayList<Infraccion>();
 		this.registroSaldo = new HashMap<Integer, Double>();
 		this.compras = new  ArrayList<Compra>();
-		this.listeners = new ArrayList <ServicioDeAlerta>(); 
-		
+		this.listeners = new HashSet<ServicioDeAlerta>(); 
 		
 	}
+	
 
 
 

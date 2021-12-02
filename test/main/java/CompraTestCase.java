@@ -35,19 +35,7 @@ public class CompraTestCase {
 		zona.getComercios().add(comercio);
 	}
 
-	@Test
-	public void testCuandoUnaCompraPorRecarga() {
-		compraPorRecarga = new CompraPorRecarga(0, comercio, 1153276406, 200);
-		Assertions.assertEquals(compraPorRecarga.getMonto(), 200);
 
-	}
-
-	@Test
-	public void testCuandoUnaCompraPorHorasFijasSeInicia() {
-		compraPorHora = new CompraPorHoraPuntual(2, 0, comercio);
-		assertEquals(2, compraPorHora.getHorasCompradas());
-	}
-	
 	@Test
 	public void testUnaCompraTieneUnNumeroDeControlAlEntrarEnElSem() {
 		comercio.generarEstacionamiento("ABC 123 ", 2);
@@ -68,11 +56,6 @@ public class CompraTestCase {
 		assertTrue(sem.getCompras().get(0).getFecha() instanceof Date);
 	}
 	
-	@Test
-	public void testUnaCompraPorRecargaTieneUnNumeroAsociado() {
-		comercio.recargarAplicativo(1145648612, 50);
-		int numeroAsociado = ((CompraPorRecarga) sem.getCompras().get(0)).getNumero();
-		assertEquals(numeroAsociado, 1145648612 );
-	}
+	
 	
 }

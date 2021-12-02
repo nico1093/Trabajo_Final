@@ -14,11 +14,15 @@ public class Comercio {
     }
 
     public void recargarAplicativo(int number, double monto){
-        sem.cargarSaldo(number, monto, this);
+    	if (monto > 0) {
+    		sem.cargarSaldo(number, monto, this);
+    	}
     }
 
     public void generarEstacionamiento(String patente, int hours){
-        sem.iniciarEstacionamientoPorCompra(patente, this.zona, hours, this);
+        if (hours > 0) {
+        	sem.iniciarEstacionamientoPorCompra(patente, this.zona, hours, this);
+        }
     }
 
 	public String getId() {

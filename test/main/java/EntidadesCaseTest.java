@@ -37,37 +37,41 @@ public class EntidadesCaseTest {
 		sem = SEM.getInstance();
 		sem.reset();	
 		entidad = mock(ServicioDeAlerta.class);
-		inspector = new Inspector(zona);
+		inspector = mock(Inspector.class);
 		zona = new ZonaDeEstacionamiento(SEM.getInstance(), inspector, new ArrayList<Comercio>());
 		comercio = new Comercio("Kiosco", zona);
 		zona.getComercios().add(comercio);
 		pantalla = mock(IPantalla.class);
 		app = new App(1153276406, "ABC123",pantalla);
-		sem.setPrecioPorHora((double) 40);
-		sem.suscribirEntidad(entidad);
 	}
 	
 	
 	@Test
 	public void seInicioUnEstacionamientoPorCompra() {
+		sem.suscribirEntidad(entidad);
 		comercio.generarEstacionamiento("ABC123", 2);
 		Mockito.verify(entidad).seInicioEstacionamiento(isA(Estacionamiento.class));
 	}
 
 	@Test
 	public void seInicioUnEstacionamientoVirtual() {
+		sem.suscribirEntidad(entidad);
 		comercio.recargarAplicativo(1153276406, 200);
 		Mockito.verify(entidad).seRealizoUnaRecarga(isA(Compra.class));
+		sem.getListeners().clear();
 	}
-
-	/*
+	
+	
 	@Test
 	public void seFinalizoUnEstacionamiento(){
+
+		sem.suscribirEntidad(entidad);
 		app.entroAZonaDeEstacionamiento(zona);
 		comercio.recargarAplicativo(1153276406, 200);
 		app.inicarEstacionamiento();
 		app.finalizarEstacionamiento();
 		Mockito.verify(entidad).seFinalizoEstacionamiento(isA(Estacionamiento.class));
 	}
-	*/
+	
+	
 }

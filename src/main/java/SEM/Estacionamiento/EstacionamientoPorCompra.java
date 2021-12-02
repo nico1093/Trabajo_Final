@@ -27,7 +27,7 @@ public class EstacionamientoPorCompra extends Estacionamiento {
 	public void activarSeguimiento() {
 	    	Timer timer = new Timer();
 	    	TareaDeEstacionamientos tarea = new TareaDeEstacionamientos(this);
-	    	timer.schedule(tarea, 0, this.horasFijas);    		
+	    	timer.schedule(tarea, this.horasFijas);    		
 	}
 	
 }

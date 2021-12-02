@@ -4,8 +4,8 @@ import main.java.SEM.Aplication.App;
 
 public interface EstadoDeMovimiento {
 	
-	public void driving(App app);
+	public void alertaDriving(App app);
 	
-	public void walking(App app);
+	public void alertaWalking(App app);
 
 }
