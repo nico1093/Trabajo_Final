@@ -147,11 +147,7 @@ public class SEM {
     public void suscribirEntidad(ServicioDeAlerta servicio) {
     	this.listeners.add(servicio);
     }
-    
-    public static SEM getInstancia() {
-    	return instancia;
-    }
-    
+   
     public List<Infraccion> getInfracciones() {
     	return infracciones;
     }
